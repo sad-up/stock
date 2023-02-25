@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hh.stock.system.mapper.PermissionMapper">
+
+    <resultMap id="BaseResultMap" type="com.hh.stock.common.core.domain.entity.Permission">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="code" column="code" jdbcType="VARCHAR"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+            <result property="icon" column="icon" jdbcType="VARCHAR"/>
+            <result property="perms" column="perms" jdbcType="VARCHAR"/>
+            <result property="url" column="url" jdbcType="VARCHAR"/>
+            <result property="component" column="component" jdbcType="VARCHAR"/>
+            <result property="frame" column="frame" jdbcType="VARCHAR"/>
+            <result property="method" column="method" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="pid" column="pid" jdbcType="VARCHAR"/>
+            <result property="orderNum" column="order_num" jdbcType="INTEGER"/>
+            <result property="type" column="type" jdbcType="TINYINT"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="deleted" column="deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,code,title,
+        icon,perms,url,
+        component,frame,
+        method,name,pid,
+        order_num,type,status,
+        create_time,update_time,deleted
+    </sql>
+
+    <select id="findMenuPermsByUserId" resultMap="BaseResultMap">
+        select distinct p.perms from sys_permission p
+        left join sys_role_permission rp on p.id = rp.permission_id
+        left join sys_user_role ur on ur.role_id = rp.role_id
+        left join sys_role r on r.id = ur.role_id
+        where ur.user_id = #{userId}
+          and p.status = '1'
+          and r.status = '1'
+
+    </select>
+
+    <select id="findMenuPermsByRoleId" resultMap="BaseResultMap">
+        select p.id
+        from sys_permission p
+                 left join sys_role_permission rp on p.id = rp.permission_id
+        where rp.role_id = #{roleId}
+          <if test="status">
+              and p.pid not in
+                  (select distinct p.pid from sys_permission p
+                      inner join sys_role_permission rp on p.id = rp.permission_id
+                                                               and rp.role_id = #{roleId})
+          </if>
+        order by p.pid
+
+
+    </select>
+    <select id="findMenuTreeByUserId" resultMap="BaseResultMap">
+        select distinct p.id, p.pid, p.title, p.name, p.url, p.component, p.status, ifnull(p.code,'') as code, p.icon, p.type, p.order_num,p.create_time
+        from sys_permission p
+        left join sys_role_permission rp on p.id = rp.permission_id
+        left join sys_user_role ur on ur.role_id = rp.role_id
+        left join sys_role r on r.id = ur.role_id
+        where ur.user_id = #{userId}
+          and p.type in (1,2)
+          and p.status = 1
+        order by p.pid,p.order_num
+        desc
+    </select>
+
+    <select id="findMenuTreeAll" resultMap="BaseResultMap">
+        select distinct p.id, p.pid, p.title, p.name, p.url, p.component, p.status, ifnull(p.code,'') as code,, p.icon, p.type, p.order_num,p.create_time
+        from sys_permission p
+        where p.type in (1,2)
+          and p.status = 1
+        order by p.pid,p.order_num
+                desc
+    </select>
+</mapper>

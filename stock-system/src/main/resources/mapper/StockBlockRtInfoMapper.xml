@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hh.stock.system.mapper.StockBlockRtInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.hh.stock.system.domain.StockBlockRtInfo">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="label" column="label" jdbcType="VARCHAR"/>
+            <result property="blockName" column="block_name" jdbcType="VARCHAR"/>
+            <result property="companyNum" column="company_num" jdbcType="INTEGER"/>
+            <result property="avgPrice" column="avg_price" jdbcType="DECIMAL"/>
+            <result property="updownRate" column="updown_rate" jdbcType="DECIMAL"/>
+            <result property="tradeAmount" column="trade_amount" jdbcType="BIGINT"/>
+            <result property="tradeVolume" column="trade_volume" jdbcType="DECIMAL"/>
+            <result property="curTime" column="cur_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,label,block_name,
+        company_num,avg_price,updown_rate,
+        trade_amount,trade_volume,cur_time
+    </sql>
+</mapper>

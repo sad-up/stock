@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hh.stock.system.mapper.StockMarketIndexInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.hh.stock.system.domain.StockMarketIndexInfo">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="markId" column="mark_Id" jdbcType="CHAR"/>
+            <result property="curTime" column="cur_time" jdbcType="TIMESTAMP"/>
+            <result property="markName" column="mark_name" jdbcType="VARCHAR"/>
+            <result property="curPoint" column="cur_point" jdbcType="DECIMAL"/>
+            <result property="currentPrice" column="current_price" jdbcType="DECIMAL"/>
+            <result property="updownRate" column="updown_rate" jdbcType="DECIMAL"/>
+            <result property="tradeAccount" column="trade_account" jdbcType="BIGINT"/>
+            <result property="tradeVolume" column="trade_volume" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,mark_Id,cur_time,
+        mark_name,cur_point,current_price,
+        updown_rate,trade_account,trade_volume
+    </sql>
+    <select id="getMarkInfo" resultType="com.hh.stock.common.core.domain.stock.InnerMarketDomain">
+        SELECT
+            tmp.*
+            sml.open_price as openPrice,
+            sml.pre_close_price as perclosePrice
+        FROM (SELECT
+                  smi.trade_account as tradeAmt,
+                  smi.mark_Id as code,
+                  smi.mark_name as name,
+                  date_format(smi.cur_time, '%Y%m%d%H%i') as curDate,
+                  smi.trade_volume as tradeVol,
+                  smi.updown_rate as upDown,
+                  smi.current_price as tradePrice
+              FROM stock_mark_index_info as smi
+              WHERE smi.market_Id in
+              <foreach collection="marketIds" item="marketId" open="(" separator="," close=")">
+                  #{marketId}
+              </foreach>
+                AND smi.cur_time = #{timePoint} ) as tmp
+                LEFT JOIN stock_market_log_price as sml
+                    ON tmp.code = sml.market_code
+                        AND date_format(sml.cur_date, '%Y%m%d%H%i')=date_format(#{timePoint},'%Y%m%d%H%i')
+    </select>
+</mapper>
