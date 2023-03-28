@@ -30,6 +30,19 @@ public class StockConfig {
      * A股大盘code集合
      */
     private List<String> inner;
+
+    /**
+     * 股票涨幅区间顺序定义
+     */
+    private List<String> upDownRange;
+    /**
+     * 大盘参数URL地址
+     */
+    private String marketUrl;
+    /**
+     * 板块URL地址
+     */
+    private String blockUrl;
     /**
      * 外盘code集合
      */

@@ -21,27 +21,63 @@
         mark_name,cur_point,current_price,
         updown_rate,trade_account,trade_volume
     </sql>
-    <select id="getMarkInfo" resultType="com.hh.stock.common.core.domain.stock.InnerMarketDomain">
+
+
+    <insert id="insertBatch">
+        insert inro stock_market_index_info
+        (id,mark_Id,cur_time,
+        mark_name,cur_point,current_price,
+        updown_rate,trade_account,trade_volume)
+        values 
+        <foreach collection="stockMarketIndexInfo" item="smi" separator=",">
+            (#{smi.id,jdbcType=BIGINT},#{smi.markId,jdbcType=CHAR},#{smi.curTime,jdbcType=TIMESTAMP}
+            ,#{smi.markName,jdbcType=VARCHAR},#{smi.curPoint,jdbcType=DECIMAL},#{smi.currentPrice,jdbcType=DECIMAL}
+            ,#{smi.updownRate,jdbcType=DECIMAL},#{smi.tradeAccount,jdbcType=BIGINT},#{smi.tradeVolume,jdbcType=BIGINT}
+            )
+        </foreach>
+    </insert>
+
+
+
+    <select id="getMarkInfo" resultType="com.hh.stock.common.core.domain.stockvo.InnerMarketDomain">
         SELECT
-            tmp.*
+            tmp.*,
             sml.open_price as openPrice,
-            sml.pre_close_price as perclosePrice
+            sml.pre_close_price as preClosePrice
         FROM (SELECT
                   smi.trade_account as tradeAmt,
                   smi.mark_Id as code,
                   smi.mark_name as name,
-                  date_format(smi.cur_time, '%Y%m%d%H%i') as curDate,
+                  date_format(smi.cur_time, '%Y-%m-%d %H:%i') as curDate,
                   smi.trade_volume as tradeVol,
                   smi.updown_rate as upDown,
                   smi.current_price as tradePrice
-              FROM stock_mark_index_info as smi
-              WHERE smi.market_Id in
+              FROM stock_market_index_info as smi
+              WHERE smi.mark_Id in
               <foreach collection="marketIds" item="marketId" open="(" separator="," close=")">
                   #{marketId}
               </foreach>
+
                 AND smi.cur_time = #{timePoint} ) as tmp
-                LEFT JOIN stock_market_log_price as sml
-                    ON tmp.code = sml.market_code
-                        AND date_format(sml.cur_date, '%Y%m%d%H%i')=date_format(#{timePoint},'%Y%m%d%H%i')
+                 LEFT JOIN stock_market_log_price as sml
+                           ON tmp.code = sml.market_code
+                               AND date_format(sml.cur_date, '%Y%m%d')=date_format( #{timePoint} ,'%Y%m%d')
     </select>
+
+    <select id="getStockTradeVol" resultType="java.util.Map">
+        select
+            sum(smi.trade_volume) as count,
+            date_format(smi.cur_time, '%Y-%m-%d %H:%i') as time
+        from stock_market_index_info as smi
+        where smi.mark_id in
+        <foreach collection="marketIds" item="marketId" open="(" separator="," close=")">
+            #{marketId}
+        </foreach>
+          and smi.cur_time between #{strartTime} and #{emdTime}
+        group by smi.cur_time
+        order by time asc;
+    </select>
+
+
+
 </mapper>

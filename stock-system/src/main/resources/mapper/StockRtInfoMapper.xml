@@ -24,4 +24,105 @@
         cur_price,max_price,min_price,
         trade_amount,trade_volume
     </sql>
+
+    <insert id="insertBatch">
+        insert into stock_rt_info
+        (
+         <include refid="Base_Column_List" />
+        )
+        values
+        <foreach collection="stockRtInfoList" item="sri" separator=",">
+            (#{sri.id,jdbcType=BIGINT},#{sri.stockCode,jdbcType=CHAR},#{sri.curTime,jdbcType=TIMESTAMP}
+            ,#{sri.stockName,jdbcType=VARCHAR},#{sri.openPrice,jdbcType=DECIMAL},#{sri.preClosePrice,jdbcType=DECIMAL}
+            ,#{sri.curPrice,jdbcType=DECIMAL},#{sri.maxPrice,jdbcType=DECIMAL},#{sri.minPrice,jdbcType=DECIMAL}
+            ,#{sri.tradeAmount,jdbcType=BIGINT},#{sri.tradeVolume,jdbcType=DECIMAL})
+        </foreach>
+    </insert>
+
+    <select id="getStockUpdownCount" resultType="java.util.Map">
+        select
+            date_format(tmp.cur_time, '%Y-%m-%d %H:%i') as time,
+            count(*) as count
+        from
+            (select sri.cur_time,
+            (sri.cur_price - sri.pre_close_price) / sri.pre_close_price as increase
+            from stock_rt_info as sri
+            where sri.cur_time between #{startTime} and #{endTime}
+            <if test="flag == 1">
+                having increase >= 0.1
+            </if>
+            <if test="flag == 0">
+                having increase &lt;= -0.1
+            </if>
+            )
+            as tmp
+        group by tmp.cur_time
+        order by tmp.cur_time asc;
+    </select>
+
+    <select id="getstockUpDownRegion" resultType="java.util.Map">
+        <![CDATA[
+        select
+            tmp2.title,
+            count(*) as count
+        from (select
+            CASE
+            WHEN tmp.rate > 0.07 THEN  '>7%'
+            WHEN tmp.rate > 0.05 AND tmp.rate <= 0.07 THEN '5~7%'
+            WHEN tmp.rate > 0.03 AND tmp.rate <= 0.05 THEN '3~5%'
+            WHEN tmp.rate > 0 AND tmp.rate <= 0.03 THEN '0~3%'
+            WHEN tmp.rate > -0.03 AND tmp.rate <= 0 THEN '-3~0%'
+            WHEN tmp.rate > -0.05 AND tmp.rate <= -0.03 THEN '-5~-3%'
+            WHEN tmp.rate > -0.07 AND tmp.rate <= -0.05 THEN '-7~-5%'
+            ELSE '<-7%'
+            END 'title'
+            from (select
+            (sri.cur_price-sri.pre_close_price)/sri.pre_close_price as rate
+            from stock_rt_info as sri
+            where sri.cur_time = #{timePoint}) as tmp) as tmp2
+        group by tmp2.title;
+        ]]>
+    </select>
+
+    <select id="getstockScreenTimeSharing" resultType="com.hh.stock.common.core.domain.stockvo.StockMinuteDomain">
+        select
+            date_format(sri.cur_time,'%Y-%m-%d %H:%i') as date,
+            sri.trade_amount as tradeAmt,
+            sri.stock_code as code,
+            sri.min_price lowPrice,
+            sri.pre_close_price as preClosePrice,
+            sri.stock_name as name,
+            sri.max_price as highPrice,
+            sri.open_price as openPrice,
+            sri.trade_volume as tradeVol,
+            sri.cur_price as tradePrice
+        from stock_rt_info as sri
+        where	sri.stock_code=#{stockCode}
+          and sri.cur_time between #{startTime} and #{endtTime}
+
+    </select>
+
+    <select id="getStockInfoEvrDay" resultType="com.hh.stock.common.core.domain.stockvo.StockEvrDayDomain">
+        select
+            date_format(sri2.cur_time,'%Y-%m-%d') as date,
+            sri2.trade_amount as tradeAmt,
+            sri2.stock_code as code,
+            sri2.min_price as lowPrice,
+            sri2.stock_name as name,
+            sri2.max_price as highPrice,
+            sri2.open_price as openPrice,
+            sri2.trade_volume as tradeVol,
+            sri2.cur_price as closePrice,
+            sri2.pre_close_price as preClosePrice
+        from
+            stock_rt_info as sri2
+        where sri2.stock_code=#{stockCode} and sri2.cur_time in (
+            select
+                max(sri.cur_time) as closeDate
+            from stock_rt_info as sri
+            where sri.stock_code=#{stockCode} and sri.cur_time between #{startTime} and #{endtTime}
+            group by date_format(sri.cur_time,'%Y-%m-%d')
+        )
+
+    </select>
 </mapper>

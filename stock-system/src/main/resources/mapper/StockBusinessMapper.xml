@@ -23,4 +23,8 @@
         <include refid="Base_Column_List" />
         from stock_business
     </select>
+
+    <select id="getAllStockCode" resultType="java.lang.String">
+        select sec_code from stock_business
+    </select>
 </mapper>

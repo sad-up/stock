@@ -5,7 +5,7 @@ import org.springframework.security.core.Authentication;
 /**
  * @author : hh
  * @date : 2023/2/13 15:05
- * @description : some description
+ * @description : 身份验证信息
  */
 
 public class AuthenticationContextHolder {
