@@ -24,12 +24,12 @@
 
 
     <insert id="insertBatch">
-        insert inro stock_market_index_info
-        (id,mark_Id,cur_time,
-        mark_name,cur_point,current_price,
-        updown_rate,trade_account,trade_volume)
+        insert into stock_market_index_info
+        (
+         <include refid="Base_Column_List" />
+        )
         values 
-        <foreach collection="stockMarketIndexInfo" item="smi" separator=",">
+        <foreach collection="stockMarketInfoList" item="smi" separator=",">
             (#{smi.id,jdbcType=BIGINT},#{smi.markId,jdbcType=CHAR},#{smi.curTime,jdbcType=TIMESTAMP}
             ,#{smi.markName,jdbcType=VARCHAR},#{smi.curPoint,jdbcType=DECIMAL},#{smi.currentPrice,jdbcType=DECIMAL}
             ,#{smi.updownRate,jdbcType=DECIMAL},#{smi.tradeAccount,jdbcType=BIGINT},#{smi.tradeVolume,jdbcType=BIGINT}

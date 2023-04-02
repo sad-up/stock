@@ -1,7 +1,8 @@
 package com.hh.stock;
 
 
-import com.hh.stock.common.config.StockConfig;
+import com.hh.stock.common.config.vo.StockConfig;
+import com.hh.stock.common.config.vo.TaskThreadPoolInfo;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 @ComponentScan(basePackages = {"com.hh.stock.web.**"})
 @ComponentScan("com.hh.**.service")
 @MapperScan("com.hh.**.mapper")
-@EnableConfigurationProperties(StockConfig.class) //开启配置初始化,加入IOC容器
+@EnableConfigurationProperties({StockConfig.class, TaskThreadPoolInfo.class}) //开启配置初始化,加入IOC容器
 public class StockApplication {
     public static void main(String[] args) {
         SpringApplication.run(StockApplication.class, args);

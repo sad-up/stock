@@ -1,7 +1,7 @@
 package com.hh.stock.web.controller.common;
 
 import com.google.code.kaptcha.Producer;
-import com.hh.stock.common.config.StockConfig;
+import com.hh.stock.common.config.vo.StockConfig;
 import com.hh.stock.common.constant.CacheConstants;
 import com.hh.stock.common.constant.Constants;
 import com.hh.stock.common.core.domain.AjaxResult;

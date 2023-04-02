@@ -19,7 +19,16 @@ public interface StockTimerTaskService {
     void getAshareInfo();
 
     /**
+     * 采集国外大盘数据
+     */
+    void getOuterMarketInfo();
+
+    /**
      * 获取板块数据
      */
     void getStockSectorRtIndex();
+
+    /**
+     * 获取大盘的开盘价与收盘价
+     */
 }

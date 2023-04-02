@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hh.stock.system.mapper.StockExternalInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.hh.stock.system.domain.StockExternalInfo">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="externalId" column="external_id" jdbcType="VARCHAR"/>
+            <result property="curTime" column="cur_time" jdbcType="TIMESTAMP"/>
+            <result property="externalName" column="external_name" jdbcType="VARCHAR"/>
+            <result property="curPoint" column="cur_point" jdbcType="DECIMAL"/>
+            <result property="curPrice" column="cur_price" jdbcType="DECIMAL"/>
+            <result property="updownRate" column="updown_rate" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,external_id,cur_time,
+        external_name,cur_point,cur_price,
+        updown_rate
+    </sql>
+
+    <insert id="insertBatch">
+        insert into stock_external_info
+        (
+        <include refid="Base_Column_List" />
+        )
+        values
+        <foreach collection="stockExternalInfoList" item="sei" separator=",">
+            (#{sei.id,jdbcType=BIGINT},#{sei.externalId,jdbcType=CHAR},#{sei.curTime,jdbcType=TIMESTAMP}
+            ,#{sei.externalName,jdbcType=VARCHAR},#{sei.curPoint,jdbcType=DECIMAL},#{sei.curPrice,jdbcType=DECIMAL}
+            ,#{sei.updownRate,jdbcType=DECIMAL}
+            )
+        </foreach>
+
+    </insert>
+
+    <select id="getMarkInfo" resultType="com.hh.stock.common.core.domain.stockvo.OuterMarketDomain">
+        SELECT
+            sei.external_id as code,
+            sei.external_name as name,
+            sei.cur_point as curPoint,
+            date_format(sei.cur_time, '%Y-%m-%d %H:%i') as curDate,
+            sei.cur_price as upDownPoint,
+            sei.updown_rate as upDownRate
+        From
+            stock_external_info as sei
+        WHERE
+            sei.external_id in
+            <foreach collection="marketIds" item="marketId" open="(" separator="," close=")">
+                #{marketId}
+            </foreach>
+        AND date_format(sei.cur_time, '%Y%m%d')=date_format( #{timePoint} ,'%Y%m%d')
+    </select>
+</mapper>

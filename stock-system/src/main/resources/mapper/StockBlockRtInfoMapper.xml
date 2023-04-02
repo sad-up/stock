@@ -24,12 +24,11 @@
 
     <insert id="insertBatch">
         insert into stock_block_rt_info
-        ( id,label,block_name
-        ,company_num,avg_price,updown_rate
-        ,trade_amount,trade_volume,cur_time
+        (
+         <include refid="Base_Column_List" />
         )
         values
-        <foreach collection="list" item="bi" separator=",">
+        <foreach collection="stockBlockRtInfoList" item="bi" separator=",">
         (#{bi.id,jdbcType=BIGINT},#{bi.label,jdbcType=VARCHAR},#{bi.blockName,jdbcType=VARCHAR}
         ,#{bi.companyNum,jdbcType=INTEGER},#{bi.avgPrice,jdbcType=DECIMAL},#{bi.updownRate,jdbcType=DECIMAL}
         ,#{bi.tradeAmount,jdbcType=BIGINT},#{bi.tradeVolume,jdbcType=DECIMAL},#{bi.curTime,jdbcType=TIMESTAMP}
@@ -38,7 +37,7 @@
     </insert>
 
     <select id="sectorAllLimit" resultType="com.hh.stock.common.core.domain.stockvo.StockBlockRtInfoVo">
-        select
+        select distinct
             sbr.company_num  as companyNum,
             sbr.trade_amount as tradeAmount,
             sbr.label        as label,
@@ -54,31 +53,31 @@
     </select>
 
     <select id="getStockRtInfoLimit" resultType="com.hh.stock.common.core.domain.stockvo.StockUpdownDomain">
-        select
+        select distinct
             sri.trade_amount as tradeAmt,
             sri.pre_close_price as preClosePrice,
             (sri.max_price - sri.min_price) / sri.pre_close_price as amplitude,
             sri.stock_code as code,
             sri.stock_name as name,
-            date_format(sri.cur_time, '%Y-%m-%d') as curDate,
+            date_format(sri.cur_time, '%Y-%m-%d %H:%i') as curDate,
             sri.trade_volume as tradeVol,
             (sri.cur_price - sri.pre_close_price) as increase,
             (sri.cur_price - sri.pre_close_price) / sri.pre_close_price as upDown,
             sri.cur_price as tradePrice
         from stock_rt_info as sri
         where sri.cur_time = #{timePoint}
-        order by upDown desc
+        order by  upDown desc
             limit 10;
     </select>
 
     <select id="getStockRtInfoAll" resultType="com.hh.stock.common.core.domain.stockvo.StockUpdownDomain">
-        select
+        select distinct
             sri.trade_amount as tradeAmt,
             sri.pre_close_price as preClosePrice,
             (sri.max_price - sri.min_price) / sri.pre_close_price as amplitude,
             sri.stock_code as code,
             sri.stock_name as name,
-            date_format(sri.cur_time, '%Y-%m-%d') as curDate,
+            date_format(sri.cur_time, '%Y-%m-%d %H:%i') as curDate,
             sri.trade_volume as tradeVol,
             (sri.cur_price - sri.pre_close_price) as increase,
             (sri.cur_price - sri.pre_close_price) / sri.pre_close_price as upDown,

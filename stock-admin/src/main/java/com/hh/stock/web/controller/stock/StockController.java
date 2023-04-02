@@ -46,6 +46,16 @@ public class StockController {
     }
 
     /**
+     * 获取最新外盘信息
+     * @return
+     */
+    @GetMapping("/external/index")
+    public AjaxResult getExternalAMarketInfo(){
+        return stockService.getExternalAMarketInfo();
+    }
+
+
+    /**
      *  沪深两市板块分时行情数据查询
      *  以交易时间和交易总金额降序查询，取前10条数据
      * @return
@@ -147,5 +157,26 @@ public class StockController {
     @RequestMapping("/stock/screen/dkline")
     public AjaxResult getDayKLinData(String code){
         return stockService.stockCreenDkLine(code);
+    }
+
+    /**
+     * 获取个股描述数据
+     * @param code 股票id
+     * @return
+     */
+    @GetMapping("/stock/describe")
+    public AjaxResult getStockDescribe(@RequestParam("code") String code){
+        return stockService.getStockDescribe(code);
+    }
+
+    /**
+     * 获取个股最新分时行情数据，主要包含：
+     * 	开盘价、前收盘价、最新价、最高价、最低价、成交金额和成交量、交易时间信息;
+     * @param code 股票编码
+     * @return
+     */
+    @GetMapping("/stock/screen/second/detail")
+    public AjaxResult getStockDetail(@RequestParam("code") String code){
+        return stockService.getStockStockDetail(code);
     }
 }

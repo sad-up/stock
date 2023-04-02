@@ -2,7 +2,7 @@ package com.hh.stock.common.utils.ip;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.hh.stock.common.config.StockConfig;
+import com.hh.stock.common.config.vo.StockConfig;
 import com.hh.stock.common.constant.Constants;
 import com.hh.stock.common.utils.StringUtils;
 import com.hh.stock.common.utils.http.HttpUtils;

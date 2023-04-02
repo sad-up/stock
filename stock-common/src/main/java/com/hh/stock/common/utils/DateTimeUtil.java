@@ -81,7 +81,7 @@ public class DateTimeUtil {
      * @return
      */
     public static DateTime getCloseDate(DateTime dateTime){
-        return dateTime.withHourOfDay(14).withMinuteOfHour(58).withSecondOfMinute(0).withMillisOfSecond(0);
+        return dateTime.withHourOfDay(15).withMinuteOfHour(00).withSecondOfMinute(0).withMillisOfSecond(0);
     }
 
     /**

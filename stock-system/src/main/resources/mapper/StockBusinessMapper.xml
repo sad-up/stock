@@ -27,4 +27,18 @@
     <select id="getAllStockCode" resultType="java.lang.String">
         select sec_code from stock_business
     </select>
+
+    <select id="getBusinessInfo" resultType="com.hh.stock.common.core.domain.stockvo.StockBusinessVo">
+        select
+            sec_code as code,
+            sec_name as name,
+            sector_name as trade,
+            business
+        from
+            stock_business
+        where
+            sec_code = #{code}
+    </select>
+
+
 </mapper>

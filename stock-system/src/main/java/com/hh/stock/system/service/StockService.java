@@ -104,4 +104,25 @@ public interface StockService {
      * @param code 股票编码
      */
     AjaxResult stockCreenDkLine(String code);
+
+    /**
+     * 获取最新外盘信息
+     * @return
+     */
+    AjaxResult getExternalAMarketInfo();
+
+    /**
+     * 获取个股主营业务
+     * @param code 股票id
+     * @return
+     */
+    AjaxResult getStockDescribe(String code);
+
+    /**
+     * 获取个股最新分时行情数据，主要包含：
+     * 	开盘价、前收盘价、最新价、最高价、最低价、成交金额和成交量、交易时间信息;
+     * @param code 股票编码
+     * @return
+     */
+    AjaxResult getStockStockDetail(String code);
 }

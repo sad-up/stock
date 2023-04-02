@@ -361,12 +361,15 @@ var ComAlertTec = {
 		var html =
 			'<div class="modal fade" id="ComAlertTec" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">' +
 			'	<div class="modal-dialog modal-lg-">' +
-			'		<div class="modal-content-tec">' +
+			'		<div class="modal-content">' +
+			'			<div class="modal-header">' +
+			'				<h4 class="modal-title" >'+ I18n.joblog_field_triggerMsg + '</h4>' +
+			'			</div>' +
 			'			<div class="modal-body">' +
-			'				<div class="alert" style="color:#fff;word-wrap: break-word;">' +
+			'				<div class="alert" style="color:#212529;word-wrap: break-word;font-size: 15px;font-weight: 700;">' +
 			'				</div>' +
 			'			</div>' +
-			'				<div class="modal-footer">' +
+			'			<div class="modal-footer">' +
 			'				<div class="text-center" >' +
 			'					<button type="button" class="btn btn-info ok" data-dismiss="modal" >'+ I18n.system_ok +'</button>' +
 			'				</div>' +

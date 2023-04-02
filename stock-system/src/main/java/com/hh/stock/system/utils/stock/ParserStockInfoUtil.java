@@ -3,11 +3,13 @@ package com.hh.stock.system.utils.stock;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.hh.stock.common.utils.DateTimeUtil;
-import com.hh.stock.common.utils.uuid.IdUtils;
+import com.hh.stock.common.utils.uuid.IdWorker;
 import com.hh.stock.system.domain.StockBlockRtInfo;
+import com.hh.stock.system.domain.StockExternalInfo;
 import com.hh.stock.system.domain.StockMarketIndexInfo;
 import com.hh.stock.system.domain.StockRtInfo;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -23,6 +25,9 @@ import java.util.stream.Collectors;
  */
 @Component
 public class ParserStockInfoUtil {
+
+    @Autowired
+    private IdWorker idWorker;
 
     /**
      * @param stockStr 大盘 股票 实时拉去原始数据(js格式解析)
@@ -51,7 +56,7 @@ public class ParserStockInfoUtil {
             }
             //国外大盘
             if (type==2) {
-                StockMarketIndexInfo info=parser4OuterStockMarket(matcher.group(1),matcher.group(2));
+                StockExternalInfo info=parser4OuterStockMarket(matcher.group(1),matcher.group(2));
                 datas.add(info);
             }
             //国内A股信息
@@ -93,7 +98,7 @@ public class ParserStockInfoUtil {
         Date curDateTime = DateTimeUtil.getDateTimeWithoutSecond(others[30] + " " + others[31]).toDate();
         //Date currentTime = DateTime.parse(others[30] + " " + others[31], DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
         StockRtInfo stockRtInfo = StockRtInfo.builder()
-                .id(IdUtils.simpleUUID())
+                .id(idWorker.nextId()+"")
                 .stockCode(stockCode)
                 .stockName(stockName)
                 .openPrice(openPrice)
@@ -114,11 +119,12 @@ public class ParserStockInfoUtil {
      * @param otherInfo 大盘其它信息，以逗号间隔
      * @return
      */
-    private StockMarketIndexInfo parser4OuterStockMarket(String marketCode, String otherInfo) {
+    private StockExternalInfo parser4OuterStockMarket(String marketCode, String otherInfo) {
         //其他信息
         String[] others=otherInfo.split(",");
+        System.out.println(others);
         //大盘名称
-        String marketName = others[0];
+        String externalName = others[0];
         //大盘点数
         BigDecimal curPoint = new BigDecimal(others[1]);
         //当前价格
@@ -128,18 +134,16 @@ public class ParserStockInfoUtil {
         //获取当前时间
         Date now=DateTimeUtil.getDateTimeWithoutSecond(DateTime.now()).toDate();
         //组装实体对象
-        StockMarketIndexInfo smi = StockMarketIndexInfo.builder()
-                .id(IdUtils.simpleUUID())
-                .markId(marketCode)
+        StockExternalInfo sei = StockExternalInfo.builder()
+                .id(idWorker.nextId()+"")
+                .externalId(marketCode)
                 .curTime(now)
-                .markName(marketName)
+                .externalName(externalName)
                 .curPoint(curPoint)
-                .currentPrice(curPrice)
+                .curPrice(curPrice)
                 .updownRate(updownRate)
-                .tradeAccount(0L)
-                .tradeVolume(0L)
                 .build();
-        return smi;
+        return sei;
     }
 
     /**
@@ -167,7 +171,7 @@ public class ParserStockInfoUtil {
         Date now=DateTimeUtil.getDateTimeWithoutSecond(DateTime.now()).toDate();
         //组装实体对象
         StockMarketIndexInfo smi = StockMarketIndexInfo.builder()
-                .id(IdUtils.simpleUUID())
+                .id(idWorker.nextId()+"")
                 .markId(marketCode)
                 .curTime(now)
                 .markName(marketName)
@@ -216,7 +220,7 @@ public class ParserStockInfoUtil {
             //当前日期
             Date now=DateTimeUtil.getDateTimeWithoutSecond(DateTime.now()).toDate();
             //构建板块信息对象
-            StockBlockRtInfo blockRtInfo = StockBlockRtInfo.builder().id(IdUtils.simpleUUID()).label(label)
+            StockBlockRtInfo blockRtInfo = StockBlockRtInfo.builder().id(idWorker.nextId()+"").label(label)
                     .blockName(blockName).companyNum(companyNum).avgPrice(avgPrice).curTime(now)
                     .updownRate(priceLimit).tradeAmount(tradeAmount).tradeVolume(tradeVolume)
                     .build();

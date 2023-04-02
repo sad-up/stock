@@ -47,7 +47,7 @@ public interface StockBlockRtInfoMapper extends BaseMapper<StockBlockRtInfo> {
      * @param list
      * @return
      */
-    int insertBatch(List<StockBlockRtInfo> list);
+    int insertBatch(@Param("stockBlockRtInfoList") List<StockBlockRtInfo> list);
 }
 
 

@@ -1,5 +1,6 @@
 package com.hh.stock.system.mapper;
 
+import com.hh.stock.common.core.domain.stockvo.StockBusinessVo;
 import com.hh.stock.system.domain.StockBusiness;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -22,6 +23,13 @@ public interface StockBusinessMapper extends BaseMapper<StockBusiness> {
      * @return
      */
     List<String> getAllStockCode();
+
+    /**
+     * 获取个股主营业务
+     * @param code
+     * @return
+     */
+    List<StockBusinessVo> getBusinessInfo(String code);
 }
 
 
