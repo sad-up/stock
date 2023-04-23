@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * @author : hh
  * @date : 2023/2/25 2:35
- * @description : some description
+ * @description : 股票接口
  */
 @RestController
 @RequestMapping("/api/quot")

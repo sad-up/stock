@@ -50,6 +50,6 @@
             <foreach collection="marketIds" item="marketId" open="(" separator="," close=")">
                 #{marketId}
             </foreach>
-        AND date_format(sei.cur_time, '%Y%m%d')=date_format( #{timePoint} ,'%Y%m%d')
+        AND date_format(sei.cur_time, '%Y%m%d %H:%i')=date_format( #{timePoint} ,'%Y%m%d %H:%i')
     </select>
 </mapper>

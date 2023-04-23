@@ -18,6 +18,7 @@
             <result property="pid" column="pid" jdbcType="VARCHAR"/>
             <result property="orderNum" column="order_num" jdbcType="INTEGER"/>
             <result property="type" column="type" jdbcType="TINYINT"/>
+            <result property="visible" column="visible" jdbcType="TINYINT"/>
             <result property="status" column="status" jdbcType="TINYINT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
@@ -29,11 +30,71 @@
         icon,perms,url,
         component,frame,
         method,name,pid,
-        order_num,type,status,
+        order_num,type,status,visible,
         create_time,update_time,deleted
     </sql>
 
-    <select id="findMenuPermsByUserId" resultMap="BaseResultMap">
+    <insert id="insertMenu" parameterType="com.hh.stock.common.core.domain.entity.Permission">
+        insert into sys_permission(
+        <if test="id != null and id != 0">id,</if>
+        <if test="pid != null and pid != 0">pid,</if>
+        <if test="title != null and title != ''">title,</if>
+        <if test="orderNum != null">order_num,</if>
+        <if test="url != null and url != ''">url,</if>
+        <if test="component != null and component != ''">component,</if>
+        <if test="frame != null and frame != ''">frame,</if>
+        <if test="type != null and type != ''">type,</if>
+        <if test="visible != null">visible,</if>
+        <if test="status != null">status,</if>
+        <if test="perms !=null and perms != ''">perms,</if>
+        <if test="icon != null and icon != ''">icon,</if>
+        create_time,
+        update_time
+        )values(
+        <if test="id != null and id != 0">#{id},</if>
+        <if test="pid != null and pid != 0">#{pid},</if>
+        <if test="title != null and title != ''">#{title},</if>
+        <if test="orderNum != null">#{orderNum},</if>
+        <if test="url != null and url != ''">#{url},</if>
+        <if test="component != null and component != ''">#{component},</if>
+        <if test="frame != null and frame != ''">#{frame},</if>
+        <if test="type != null and type != ''">#{type},</if>
+        <if test="visible != null">#{visible},</if>
+        <if test="status != null">#{status},</if>
+        <if test="perms !=null and perms != ''">#{perms},</if>
+        <if test="icon != null and icon != ''">#{icon},</if>
+        sysdate(),
+        sysdate()
+        )
+    </insert>
+    <update id="updateMenu">
+        update sys_permission
+        <set>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="pid != null">pid = #{pid},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="component != null">component = #{component},</if>
+            <if test="frame != null and frame != ''">frame = #{frame},</if>
+            <if test="type != null and type != ''">type = #{type},</if>
+            <if test="visible != null">visible = #{visible},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="perms !=null">perms = #{perms},</if>
+            <if test="icon !=null and icon != ''">icon = #{icon},</if>
+            update_time = sysdate()
+        </set>
+        where id = #{id}
+
+
+    </update>
+    <delete id="deleteMenuById">
+
+        delete from sys_permission where id = #{menuId}
+
+    </delete>
+
+
+    <select id="findMenuPermsByUserId" resultType="String">
         select distinct p.perms from sys_permission p
         left join sys_role_permission rp on p.id = rp.permission_id
         left join sys_user_role ur on ur.role_id = rp.role_id
@@ -80,4 +141,66 @@
         order by p.pid,p.order_num
                 desc
     </select>
+    <select id="selectMenuList" resultType="com.hh.stock.common.core.domain.entity.Permission">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_permission
+        <where>
+            <if test="title != null and title != ''">
+                AND title like concat('%', #{title}, '%')
+            </if>
+            <if test="visible != null and visible != ''">
+                AND visible = #{visible}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+        order by pid, order_num
+    </select>
+    <select id="selectMenuListByUserId"  resultType="com.hh.stock.common.core.domain.entity.Permission">
+        select distinct m.id, m.pid, m.title, m.url, m.component, m.status, ifnull(m.perms,'') as perms, m.frame, m.type, m.icon, m.order_num, m.create_time
+        from sys_permission m
+        left join sys_role_permission rp on m.id = rp.permission_id
+        left join sys_user_role ur on ur.role_id = rp.role_id
+        left join sys_role r on r.id = ur.role_id
+        where ur.user_id = #{params.userId}
+        <if test="title != null and title != ''">
+            AND m.title like concat('%', #{title}, '%')
+        </if>
+        <if test="status != null and status != ''">
+            AND m.status = #{status}
+        </if>
+        order by m.pid, m.order_num
+    </select>
+
+    <select id="selectMenuListByRoleId" resultType="java.lang.String">
+        select m.id
+        from sys_permission m
+        left join sys_role_permission rm on m.id = rm.permission_id
+        where rm.role_id = #{roleId}
+        <if test="menuCheckStrictly">
+            and m.id not in (select m.pid from sys_menu m inner join sys_role_menu rm on m.id = rm.permission_id and rm.role_id = #{roleId})
+        </if>
+        order by m.pid, m.order_num
+    </select>
+    <select id="checkMenuNameUnique" resultType="com.hh.stock.common.core.domain.entity.Permission">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_permission
+        where title=#{title} and pid = #{pid} limit 1
+    </select>
+    <select id="hasChildByMenuId" resultType="java.lang.Integer">
+        select count(1) from sys_permission where pid = #{menuId}
+
+    </select>
+
+    <select id="selectMenuById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_permission
+        where id = #{menuId}
+
+    </select>
+
 </mapper>

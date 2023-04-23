@@ -70,7 +70,7 @@ public class SysLoginService {
                 throw new ServiceException(e.getMessage());
             }
         }
-//        AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
+        AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
 //        recordLoginInfo(loginUser.getUserId());
         return tokenService.createToken(loginUser);

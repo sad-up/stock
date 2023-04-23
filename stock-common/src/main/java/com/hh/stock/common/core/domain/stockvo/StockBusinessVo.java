@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * @author : hh
  * @date : 2023/4/2 16:34
- * @description : some description
+ * @description : 定义封装返回前端个股主营业务信息的实体类
  */
 
 @Data

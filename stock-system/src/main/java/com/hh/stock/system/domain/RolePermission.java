@@ -35,6 +35,9 @@ public class RolePermission implements Serializable {
      */
     private Date createTime;
 
+
+
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
