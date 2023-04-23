@@ -442,12 +442,85 @@ public class StockServiceImpl implements StockService {
      */
     @Override
     public AjaxResult getStockStockDetail(String code) {
-        // 1.查数据
+        //1.获取最近有效的股票交易时间
+        DateTime lastDateStock = DateTimeUtil.getLastDate4Stock(new DateTime().minusMinutes(+1));
+        //获取当前日期
+        Date endTime = lastDateStock.toDate();
+        //获取当前日期对应的开盘日期
+        DateTime openDateTime = DateTimeUtil.getOpenDate(lastDateStock);
+        Date startTime = openDateTime.toDate();
+        // 1.查询数据
+        List<StockDetail> infos = stockRtInfoMapper.getStockStockDetail(code,startTime,endTime);
+        // 2.判断是否为空
+        if(CollectionUtils.isEmpty(infos)) {
+            infos = new ArrayList<>();
+        }
+        // 3.组装数据
+        return AjaxResult.success(infos);
+    }
 
-        // 2.判空
+    /**
+     * 功能描述：根据输入的个股代码，进行模糊查询，返回证券代码和证券名称
+     * @param code
+     * @return
+     */
+    @Override
+    public AjaxResult getStockSearch(String code) {
+            return null;
+    }
 
-        // 3.组装
-        return null;
+    /**
+     * 功能描述：个股交易流水行情数据查询--查询最新交易流水，按照交易时间降序取前10
+     * @param code
+     * @return
+     */
+    @Override
+    public AjaxResult getStockScreenSecond(String code) {
+        //1.获取最近有效的股票交易时间
+        DateTime lastDateStock = DateTimeUtil.getLastDate4Stock(new DateTime().minusMinutes(+1));
+        //获取当前日期
+        Date endTime = lastDateStock.toDate();
+        //获取当前日期对应的开盘日期
+        DateTime openDateTime = DateTimeUtil.getOpenDate(lastDateStock);
+        Date startTime = openDateTime.toDate();
+        // 1.查询数据
+        List<StockScreenSecond> infos = stockRtInfoMapper.getStockScreenSecond(code,startTime,endTime);
+        // 2.判断是否为空
+        if(CollectionUtils.isEmpty(infos)) {
+            infos = new ArrayList<>();
+        }
+        // 3.组装数据
+        return AjaxResult.success(infos);
+    }
+
+    /**
+     * 功能描述：统计每周内的股票数据信息，信息包含：
+     * 	股票ID、 一周内最高价、 一周内最低价 、周1开盘价、周5的收盘价、
+     * 	整周均价、以及一周内最大交易日期（一般是周五所对应日期）;
+     * @param code
+     * @return
+     */
+    @Override
+    public AjaxResult getStockWeekKline(String code) {
+        // 1.获取查询日期范围
+        // 1.1 获取截止时间
+        DateTime endDateTime = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        Date endTime = endDateTime.toDate();
+        //TODO mock数据
+        //endTime = DateTime.parse("2022-01-07 15:00:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+        // 1.2 获取开始时间 当前日期前推20天
+        DateTime startDateTime = DateTimeUtil.getDateTimeWithoutday(endDateTime.minusWeeks(20));
+        Date startTime = DateTimeUtil.getFirstDayOfWeek(startDateTime.toDate());
+
+        //TODO mock数据
+        //startTime = DateTime.parse("2022-01-07 09:30:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+        // 2. 调用mapper接口获取查询的集合数据
+        List<StockScreenWeekkline> infos = stockRtInfoMapper.getStockWeekKline(code, startTime , endTime);
+        if(CollectionUtils.isEmpty(infos)) {
+            infos = new ArrayList<>();
+        }
+        // 3.组装数据
+        return AjaxResult.success(infos);
     }
 
 }

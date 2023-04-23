@@ -1,7 +1,6 @@
 package com.hh.stock.system.mapper;
 
-import com.hh.stock.common.core.domain.stockvo.StockEvrDayDomain;
-import com.hh.stock.common.core.domain.stockvo.StockMinuteDomain;
+import com.hh.stock.common.core.domain.stockvo.*;
 import com.hh.stock.system.domain.StockRtInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.MapKey;
@@ -48,7 +47,7 @@ public interface StockRtInfoMapper extends BaseMapper<StockRtInfo> {
      */
     List<StockMinuteDomain> getstockScreenTimeSharing(@Param("stockCode") String stockCode,
                                                       @Param("startTime") Date startTime,
-                                                      @Param("endtTime") Date endTime);
+                                                      @Param("endTime") Date endTime);
 
     /**
      * 查询指定日期范围内指定股票每天的交易数据
@@ -59,7 +58,7 @@ public interface StockRtInfoMapper extends BaseMapper<StockRtInfo> {
      */
     List<StockEvrDayDomain> getStockInfoEvrDay(@Param("stockCode") String stockCode,
                                                @Param("startTime") Date startTime,
-                                               @Param("endtTime") Date endTime);
+                                               @Param("endTime") Date endTime);
 
 
     /**
@@ -67,6 +66,37 @@ public interface StockRtInfoMapper extends BaseMapper<StockRtInfo> {
      * @param stockRtInfoList
      */
     int insertBatch(@Param("stockRtInfoList") List<StockRtInfo> stockRtInfoList);
+
+    /**
+     * 获取个股最新分时行情数据，主要包含：
+     * 	开盘价、前收盘价、最新价、最高价、最低价、成交金额和成交量、交易时间信息;
+     * @param code 股票编码
+     * @return
+     */
+    List<StockDetail> getStockStockDetail(@Param("code") String code,
+                                          @Param("startTime") Date startTime,
+                                          @Param("endTime") Date endTime);
+
+
+    /**
+     * 功能描述：个股交易流水行情数据查询--查询最新交易流水，按照交易时间降序取前10
+     * @param code
+     * @return
+     */
+    List<StockScreenSecond> getStockScreenSecond(@Param("code") String code,
+                                                 @Param("startTime") Date startTime,
+                                                 @Param("endTime") Date endTime);
+
+    /**
+     * 功能描述：统计每周内的股票数据信息，信息包含：
+     * 	股票ID、 一周内最高价、 一周内最低价 、周1开盘价、周5的收盘价、
+     * 	整周均价、以及一周内最大交易日期（一般是周五所对应日期）;
+     * @param code
+     * @return
+     */
+    List<StockScreenWeekkline> getStockWeekKline(@Param("code") String code,
+                                                 @Param("startTime") Date startTime,
+                                                 @Param("endTime") Date endTime);
 }
 
 

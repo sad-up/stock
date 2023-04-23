@@ -125,4 +125,27 @@ public interface StockService {
      * @return
      */
     AjaxResult getStockStockDetail(String code);
+
+    /**
+     * 功能描述：根据输入的个股代码，进行模糊查询，返回证券代码和证券名称
+     * @param code
+     * @return
+     */
+    AjaxResult getStockSearch(String code);
+
+    /**
+     * 功能描述：个股交易流水行情数据查询--查询最新交易流水，按照交易时间降序取前10
+     * @param code
+     * @return
+     */
+    AjaxResult getStockScreenSecond(String code);
+
+    /**
+     * 功能描述：统计每周内的股票数据信息，信息包含：
+     * 	股票ID、 一周内最高价、 一周内最低价 、周1开盘价、周5的收盘价、
+     * 	整周均价、以及一周内最大交易日期（一般是周五所对应日期）;
+     * @param code
+     * @return
+     */
+    AjaxResult getStockWeekKline(String code);
 }

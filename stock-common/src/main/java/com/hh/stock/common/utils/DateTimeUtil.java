@@ -3,6 +3,12 @@ package com.hh.stock.common.utils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import static org.apache.commons.lang3.time.DateFormatUtils.format;
+
 
 /**
  * @author : hh
@@ -153,6 +159,16 @@ public class DateTimeUtil {
         return newDate;
     }
 
+    /**
+     * 将时分归整
+     * @param dateTime 指定日期
+     * @return
+     */
+    public static DateTime getDateTimeWithoutday(DateTime dateTime){
+        DateTime newDate = dateTime.withHourOfDay(9).withMinuteOfHour(30).withSecondOfMinute(0).withMillisOfSecond(0);
+        return newDate;
+    }
+
 
     /**
      * 将秒时归零
@@ -162,5 +178,20 @@ public class DateTimeUtil {
     public static DateTime getDateTimeWithoutSecond(String dateTime){
         DateTime parse = DateTime.parse(dateTime, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
         return getDateTimeWithoutSecond(parse);
+    }
+
+    /**
+     * 获取指定日期所在周的周一
+     *
+     * @param date 日期
+     */
+    public static Date getFirstDayOfWeek(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        if (c.get(Calendar.DAY_OF_WEEK) == 1) {
+            c.add(Calendar.DAY_OF_MONTH, -1);
+        }
+        c.add(Calendar.DATE, c.getFirstDayOfWeek() - c.get(Calendar.DAY_OF_WEEK) + 1);
+        return c.getTime();
     }
 }

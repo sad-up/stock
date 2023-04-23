@@ -30,6 +30,8 @@ public interface StockBusinessMapper extends BaseMapper<StockBusiness> {
      * @return
      */
     List<StockBusinessVo> getBusinessInfo(String code);
+
+
 }
 
 

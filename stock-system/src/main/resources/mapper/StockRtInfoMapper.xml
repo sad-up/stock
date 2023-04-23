@@ -99,12 +99,12 @@
             sri.cur_price as tradePrice
         from stock_rt_info as sri
         where	sri.stock_code=#{stockCode}
-          and sri.cur_time between #{startTime} and #{endtTime}
+          and sri.cur_time between #{startTime} and #{endTime}
 
     </select>
 
     <select id="getStockInfoEvrDay" resultType="com.hh.stock.common.core.domain.stockvo.StockEvrDayDomain">
-        select
+        select distinct
             date_format(sri2.cur_time,'%Y-%m-%d') as date,
             sri2.trade_amount as tradeAmt,
             sri2.stock_code as code,
@@ -121,9 +121,86 @@
             select
                 max(sri.cur_time) as closeDate
             from stock_rt_info as sri
-            where sri.stock_code=#{stockCode} and sri.cur_time between #{startTime} and #{endtTime}
+            where sri.stock_code=#{stockCode} and sri.cur_time between #{startTime} and #{endTime}
             group by date_format(sri.cur_time,'%Y-%m-%d')
         )
 
+    </select>
+
+    <select id="getStockStockDetail" resultType="com.hh.stock.common.core.domain.stockvo.StockDetail">
+        select
+            date_format(sri.cur_time,'%Y%m%d%H%i') as date,
+            sri.trade_amount as tradeAmt,
+            sri.min_price as lowPrice,
+            sri.pre_close_price as preClosePrice,
+            sri.stock_name as name,
+            sri.max_price as highPrice,
+            sri.open_price as openPrice,
+            sri.trade_volume as tradeVol,
+            sri.cur_price as tradePrice
+        from stock_rt_info as sri
+        where sri.stock_code = #{code}
+          and sri.cur_time between #{startTime} and #{endTime}
+    </select>
+
+    <select id="getStockScreenSecond" resultType="com.hh.stock.common.core.domain.stockvo.StockScreenSecond">
+        SELECT DISTINCT
+            date_format(cur_time,"%m-%d %H:%i") as date ,
+            trade_amount as tradeAmt,
+            trade_volume as tradeVol,
+            cur_price as tradePrice
+        FROM stock_rt_info
+        WHERE stock_code = #{code}
+          AND cur_time between #{startTime} and #{endTime}
+        order by date DESC
+        limit 10
+    </select>
+    <select id="getStockWeekKline" resultType="com.hh.stock.common.core.domain.stockvo.StockScreenWeekkline">
+        SELECT
+            c.stock_code code ,
+            c.week as week,
+            c.maxTime as maxTime,
+            c.max_price as maxPrice,
+            c.cur_price as avgPrice,
+            c.min_price as minPrice,
+            a.open_price as openPrice,
+            b.pre_close_price as closePrice
+        from
+            (select date_format(sri.cur_time,"%Y-%u") as week, open_price
+             from stock_rt_info as sri
+             where sri.stock_code =  #{code}
+               and sri.cur_time between  #{startTime} and #{endTime}
+             group by week)
+                a left JOIN (
+                select
+                    date_format(sri2.cur_time,"%Y-%u") week,
+                    sri2.pre_close_price
+                from
+                    stock_rt_info as sri2
+                where sri2.stock_code =   #{code}
+                  and sri2.cur_time in (
+                    select
+                        max( sri.cur_time ) as closeDate
+                    from
+                        stock_rt_info as sri
+                    where
+                        sri.stock_code =   #{code}
+                      and sri.cur_time  between  #{startTime}  and #{endTime}
+                    group by
+                        date_format(sri.cur_time,"%Y-%u"))
+                group  by week) b on a.week = b.week
+                  left join (
+                select
+                    sri.stock_code as stock_code,
+                    date_format(sri.cur_time,"%Y-%u") as week,
+                    max(sri.max_price) as max_price,
+                    min(sri.min_price) as min_price,
+                    avg(sri.cur_price) as cur_price,
+                    max(date_format(sri.`cur_time`,"%Y-%m-%d")) as maxTime
+                from stock_rt_info as sri
+                where sri.`stock_code` =   #{code}
+                  and sri.cur_time between  #{startTime}  and #{endTime}
+                group by week) c on a.week = c.week
+        group by week
     </select>
 </mapper>
