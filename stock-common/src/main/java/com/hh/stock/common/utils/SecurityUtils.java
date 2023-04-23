@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 /**
  * @author : hh
  * @date : 2023/2/13 16:14
- * @description : some description
+ * @description : 安全服务工具类
  */
 
 public class SecurityUtils

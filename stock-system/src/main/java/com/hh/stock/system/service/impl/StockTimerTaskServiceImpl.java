@@ -1,7 +1,6 @@
 package com.hh.stock.system.service.impl;
 
 import com.google.common.collect.Lists;
-import com.hh.stock.common.utils.DateTimeUtil;
 import com.hh.stock.system.domain.StockBlockRtInfo;
 import com.hh.stock.system.domain.StockExternalInfo;
 import com.hh.stock.system.mapper.*;
@@ -11,8 +10,8 @@ import com.hh.stock.common.config.vo.StockConfig;
 import com.hh.stock.system.domain.StockMarketIndexInfo;
 import com.hh.stock.system.domain.StockRtInfo;
 import com.hh.stock.system.service.StockTimerTaskService;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,12 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +31,7 @@ import java.util.stream.Collectors;
  */
 @Service("stockTimerTaskService")
 @Slf4j
+@Data
 public class StockTimerTaskServiceImpl implements StockTimerTaskService {
 
     @Autowired
@@ -181,7 +177,6 @@ public class StockTimerTaskServiceImpl implements StockTimerTaskService {
         //数据分片保存到数据库下 行业板块类目大概50个，可每小时查询一次即可
         Lists.partition(infos,20).forEach(list->{
             threadPoolTaskExecutor.execute(() ->{
-                log.info("板块数据量：{}",infos.size());
                 //20个一组，批量插入
                 stockBlockRtInfoMapper.insertBatch(list);
             });

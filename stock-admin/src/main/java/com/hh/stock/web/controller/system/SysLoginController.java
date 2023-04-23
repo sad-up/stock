@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * @author : hh
  * @date : 2023/2/10 16:30
- * @description : 登录验证
+ * @description : 登录接口
  */
 @RestController
 @RequestMapping("/api")

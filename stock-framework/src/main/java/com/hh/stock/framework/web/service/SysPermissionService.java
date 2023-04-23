@@ -1,5 +1,6 @@
 package com.hh.stock.framework.web.service;
 
+import cn.hutool.core.collection.CollUtil;
 import com.hh.stock.common.core.domain.entity.User;
 import com.hh.stock.common.core.domain.entity.Role;
 import com.hh.stock.system.service.PermissionService;
@@ -64,7 +65,7 @@ public class SysPermissionService
         else
         {
             List<Role> roles = user.getRoles();
-            if (!roles.isEmpty() && roles.size() > 1)
+            if (CollUtil.isNotEmpty(roles) && roles.size() >= 1)
             {
                 // 多角色设置permissions属性，以便数据权限匹配权限
                 for (Role role : roles)

@@ -3,12 +3,18 @@ package com.hh.stock.system.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hh.stock.common.constant.Constants;
 import com.hh.stock.common.constant.UserConstants;
+import com.hh.stock.common.core.domain.AjaxResult;
 import com.hh.stock.common.core.domain.TreeSelect;
+import com.hh.stock.common.core.domain.entity.Role;
+import com.hh.stock.common.core.domain.entity.User;
 import com.hh.stock.common.utils.SecurityUtils;
 import com.hh.stock.common.utils.StringUtils;
 import com.hh.stock.common.core.domain.entity.Permission;
+import com.hh.stock.common.utils.uuid.IdWorker;
 import com.hh.stock.system.domain.vo.MetaVo;
 import com.hh.stock.system.domain.vo.RouterVo;
+import com.hh.stock.system.mapper.RoleMapper;
+import com.hh.stock.system.mapper.RolePermissionMapper;
 import com.hh.stock.system.service.PermissionService;
 import com.hh.stock.system.mapper.PermissionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +34,15 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Autowired
     private PermissionMapper permissionMapper;
+
+    @Autowired
+    private RoleMapper roleMapper;
+
+    @Autowired
+    private RolePermissionMapper rolePermissionMapper;
+
+    @Autowired
+    private IdWorker idWorker;
 
     /**
      * 根据用户ID查询权限
@@ -242,27 +257,27 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
      * @param menus 菜单列表
      * @return 树结构列表
      */
-//    @Override
-//    public List<Permission> buildMenuTree(List<Permission> menus)
-//    {
-//        List<Permission> returnList = new ArrayList<Permission>();
-//        List<String> tempList = menus.stream().map(Permission::getId).collect(Collectors.toList());
-//        for (Iterator<Permission> iterator = menus.iterator(); iterator.hasNext();)
-//        {
-//            Permission menu = (Permission) iterator.next();
-//            // 如果是顶级节点, 遍历该父节点的所有子节点
-//            if (!tempList.contains(menu.getPid()))
-//            {
-//                recursionFn(menus, menu);
-//                returnList.add(menu);
-//            }
-//        }
-//        if (returnList.isEmpty())
-//        {
-//            returnList = menus;
-//        }
-//        return returnList;
-//    }
+    @Override
+    public List<Permission> buildMenuTree(List<Permission> menus)
+    {
+        List<Permission> returnList = new ArrayList<Permission>();
+        List<String> tempList = menus.stream().map(Permission::getId).collect(Collectors.toList());
+        for (Iterator<Permission> iterator = menus.iterator(); iterator.hasNext();)
+        {
+            Permission menu = (Permission) iterator.next();
+            // 如果是顶级节点, 遍历该父节点的所有子节点
+            if (!tempList.contains(menu.getPid()))
+            {
+                recursionFn(menus, menu);
+                returnList.add(menu);
+            }
+        }
+        if (returnList.isEmpty())
+        {
+            returnList = menus;
+        }
+        return returnList;
+    }
 
     /**
      * 构建前端所需要下拉树结构
@@ -270,12 +285,124 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
      * @param menus 菜单列表
      * @return 下拉树结构列表
      */
-//    @Override
-//    public List<TreeSelect> buildMenuTreeSelect(List<Permission> menus)
-//    {
-//        List<Permission> menuTrees = buildMenuTree(menus);
-//        return menuTrees.stream().map(TreeSelect::new).collect(Collectors.toList());
-//    }
+    @Override
+    public List<TreeSelect> buildMenuTreeSelect(List<Permission> menus)
+    {
+        List<Permission> menuTrees = buildMenuTree(menus);
+        return menuTrees.stream().map(TreeSelect::new).collect(Collectors.toList());
+    }
+
+    /**
+     * 根据角色ID查询菜单树信息
+     *
+     * @param roleId 角色ID
+     * @return 选中菜单列表
+     */
+    @Override
+    public List<String> selectMenuListByRoleId(String roleId)
+    {
+        Role role = roleMapper.selectRoleById(roleId);
+        return permissionMapper.selectMenuListByRoleId(roleId, role.isMenuCheckStrictly());
+    }
+
+
+    /**
+     * 是否存在菜单子节点
+     *
+     * @param menuId 菜单ID
+     * @return 结果
+     */
+    @Override
+    public boolean hasChildByMenuId(String menuId)
+    {
+        int result = permissionMapper.hasChildByMenuId(menuId);
+        return result > 0;
+    }
+
+
+    /**
+     * 新增保存菜单信息
+     *
+     * @param menu 菜单信息
+     * @return 结果
+     */
+    @Override
+    public int insertMenu(Permission menu)
+    {
+        menu.setId(idWorker.nextId()+"");
+        return permissionMapper.insertMenu(menu);
+    }
+
+
+    /**
+     * 修改保存菜单信息
+     *
+     * @param menu 菜单信息
+     * @return 结果
+     */
+    @Override
+    public int updateMenu(Permission menu) {
+        return permissionMapper.updateMenu(menu);
+    }
+
+
+    /**
+     * 删除菜单管理信息
+     *
+     * @param menuId 菜单ID
+     * @return 结果
+     */
+    @Override
+    public int deleteMenuById(String menuId)
+    {
+        return permissionMapper.deleteMenuById(menuId);
+    }
+
+    /**
+     * 校验菜单名称是否唯一
+     *
+     * @param menu 菜单信息
+     * @return 结果
+     */
+    @Override
+    public String checkMenuNameUnique(Permission menu)
+    {
+        String menuId = StringUtils.isNull(menu.getId()) ? "" : menu.getId();
+        Permission info = permissionMapper.checkMenuNameUnique(menu.getTitle(), menu.getPid());
+        if (StringUtils.isNotNull(info) && !info.getId().equals(menuId))
+        {
+            return UserConstants.NOT_UNIQUE;
+        }
+        return UserConstants.UNIQUE;
+    }
+
+
+    /**
+     * 查询菜单使用数量
+     *
+     * @param menuId 菜单ID
+     * @return 结果
+     */
+    @Override
+    public boolean checkMenuExistRole(String menuId)
+    {
+        int result = rolePermissionMapper.checkMenuExistRole(menuId);
+        return result > 0;
+    }
+
+
+    /**
+     * 根据菜单ID查询信息
+     *
+     * @param menuId 菜单ID
+     * @return 菜单信息
+     */
+    @Override
+    public Permission selectMenuById(String menuId)
+    {
+        return permissionMapper.selectMenuById(menuId);
+    }
+
 
     /**
      * 根据父节点的ID获取所有子节点
@@ -368,6 +495,43 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         return StringUtils.replaceEach(path, new String[] { Constants.HTTP, Constants.HTTPS, Constants.WWW, "." },
                 new String[] { "", "", "", "/" });
     }
+
+
+    /**
+     * 查询系统菜单列表
+     *
+     * @param menu 菜单信息
+     * @return 菜单列表
+     */
+    @Override
+    public List<Permission> selectMenuList(Permission menu, String userId)
+    {
+        List<Permission> menuList = null;
+        System.out.println(userId);
+        // 管理员显示所有菜单信息
+        if (User.isAdmin(userId))
+        {
+            menuList = permissionMapper.selectMenuList(menu);
+        }
+        else
+        {
+            menuList = permissionMapper.findMenuTreeByUserId(userId);
+        }
+        return menuList;
+    }
+
+    /**
+     * 根据用户查询系统菜单列表
+     *
+     * @param userId 用户ID
+     * @return 菜单列表
+     */
+    @Override
+    public List<Permission> selectMenuList(String userId)
+    {
+        return selectMenuList(new Permission(), userId);
+    }
+
 }
 
 

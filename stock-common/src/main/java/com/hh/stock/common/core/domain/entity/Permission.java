@@ -70,6 +70,7 @@ public class Permission extends BaseEntity implements Serializable {
      */
     private String name;
 
+
     /**
      * 父级菜单权限id
      */
@@ -84,6 +85,12 @@ public class Permission extends BaseEntity implements Serializable {
      * 菜单权限类型(1:目录;2:菜单;3:按钮)
      */
     private String type;
+
+    /**
+     *  菜单状态（1显示 0隐藏）
+     */
+    private Integer visible;
+
 
     /**
      * 状态1:正常 0：禁用
@@ -107,6 +114,8 @@ public class Permission extends BaseEntity implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+
 
     /** 子菜单 */
     private List<Permission> children = new ArrayList<Permission>();
@@ -146,6 +155,7 @@ public class Permission extends BaseEntity implements Serializable {
             && (this.getPid() == null ? other.getPid() == null : this.getPid().equals(other.getPid()))
             && (this.getOrderNum() == null ? other.getOrderNum() == null : this.getOrderNum().equals(other.getOrderNum()))
             && (this.getType() == null ? other.getType() == null : this.getType().equals(other.getType()))
+            && (this.getVisible() == null ? other.getVisible() == null : this.getVisible().equals(other.getVisible()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
@@ -169,6 +179,7 @@ public class Permission extends BaseEntity implements Serializable {
         result = prime * result + ((getPid() == null) ? 0 : getPid().hashCode());
         result = prime * result + ((getOrderNum() == null) ? 0 : getOrderNum().hashCode());
         result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
+        result = prime * result + ((getVisible() == null) ? 0 : getVisible().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
@@ -195,6 +206,7 @@ public class Permission extends BaseEntity implements Serializable {
         sb.append(", pid=").append(pid);
         sb.append(", orderNum=").append(orderNum);
         sb.append(", type=").append(type);
+        sb.append(", visible=").append(visible);
         sb.append(", status=").append(status);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);

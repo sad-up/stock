@@ -28,6 +28,9 @@ public class Role extends BaseEntity implements Serializable {
      */
     private String name;
 
+    /** 菜单树选择项是否关联显示（ 0：父子不互相关联显示 1：父子互相关联显示） */
+    private boolean menuCheckStrictly;
+
     /**
      * 描述
      */
@@ -53,6 +56,62 @@ public class Role extends BaseEntity implements Serializable {
      */
     private Integer deleted;
 
+    /** 菜单组 */
+    private String[] menuIds;
+
+    public Role()
+    {
+
+    }
+    public Role(String id)
+    {
+        this.id = id;
+    }
+
+    public String getRoleId()
+    {
+        return id;
+    }
+
+    public void setRoleId(String id)
+    {
+        this.id = id;
+    }
+
+    public String[] getMenuIds()
+    {
+        return menuIds;
+    }
+
+    public void setMenuIds(String[] menuIds)
+    {
+        this.menuIds = menuIds;
+    }
+
+    public boolean isMenuCheckStrictly()
+    {
+        return menuCheckStrictly;
+    }
+
+    public void setMenuCheckStrictly(boolean menuCheckStrictly)
+    {
+        this.menuCheckStrictly = menuCheckStrictly;
+    }
+
+    /** 用户是否存在此角色标识 默认不存在 */
+    private boolean flag = false;
+
+    public boolean isFlag()
+    {
+        return flag;
+    }
+
+    public void setFlag(boolean flag)
+    {
+        this.flag = flag;
+    }
+
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
@@ -76,7 +135,7 @@ public class Role extends BaseEntity implements Serializable {
 
     public static boolean isAdmin(String id)
     {
-        return id != null ;
+        return id != null && id.equals("1237361915165020161");
     }
 
     @Override
@@ -122,6 +181,7 @@ public class Role extends BaseEntity implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", name=").append(name);
+        sb.append(", menuCheckStrictly=").append(menuCheckStrictly);
         sb.append(", description=").append(description);
         sb.append(", status=").append(status);
         sb.append(", createTime=").append(createTime);

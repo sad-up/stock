@@ -129,20 +129,55 @@ public class User extends BaseEntity implements Serializable  {
 
     public static boolean isAdmin(String id)
     {
-        return id != null;
+        return id != null &&  id.equals("1237361915165020161") ;
     }
 
     /** 角色对象 */
     private List<Role> roles;
+    public List<Role> getRoles()
+    {
+        return roles;
+    }
 
+    public void setRoles(List<Role> roles)
+    {
+        this.roles = roles;
+    }
+
+
+    public User()
+    {
+
+    }
     /** 角色组 */
-    private Long[] roleIds;
+    private String[] roleIds;
 
-    /** 岗位组 */
-    private Long[] postIds;
+    public User(String Id)
+    {
+        this.id = Id;
+    }
 
     /** 角色ID */
-    private Long roleId;
+    private String roleId;
+
+    public String[] getRoleIds()
+    {
+        return roleIds;
+    }
+
+    public void setRoleIds(String[] roleIds)
+    {
+        this.roleIds = roleIds;
+    }
+    public String getRoleId()
+    {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId)
+    {
+        this.roleId = roleId;
+    }
 
 
     @Override

@@ -7,10 +7,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+
 /**
  * @author : hh
- * @date : 2023/3/28 16:48
- * @description : 配置线程池bean对象
+ * @date : 2023/4/2 23:20
+ * @description : some description
  */
 @Configuration
 @EnableConfigurationProperties(TaskThreadPoolInfo.class)
@@ -40,8 +43,26 @@ public class TaskExecutePool {
         taskExecutor.setKeepAliveSeconds(info.getKeepAliveSeconds());
         //线程名称前缀
         taskExecutor.setThreadNamePrefix("StockThread-");
+        //设置拒绝策略
+        taskExecutor.setRejectedExecutionHandler(rejectedExecutionHandler());
         //参数初始化
         taskExecutor.initialize();
         return taskExecutor;
+    }
+
+    /**
+     * 自定义线程拒绝策略
+     * @return
+     */
+    @Bean
+    public RejectedExecutionHandler rejectedExecutionHandler(){
+        RejectedExecutionHandler errorHandler = new RejectedExecutionHandler() {
+            @Override
+            public void rejectedExecution(Runnable runnable, ThreadPoolExecutor executor) {
+                //TODO 可自定义Runable实现类，传入参数，做到不同任务，不同处理
+                log.info("股票任务出现异常:发送邮件");
+            }
+        };
+        return errorHandler;
     }
 }

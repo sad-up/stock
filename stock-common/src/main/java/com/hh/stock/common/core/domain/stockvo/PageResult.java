@@ -54,4 +54,6 @@ public class PageResult<T> implements Serializable {
         size = pageInfo.getSize();
         rows = pageInfo.getList();
     }
+
+
 }
