@@ -97,6 +97,13 @@ public interface StockRtInfoMapper extends BaseMapper<StockRtInfo> {
     List<StockScreenWeekkline> getStockWeekKline(@Param("code") String code,
                                                  @Param("startTime") Date startTime,
                                                  @Param("endTime") Date endTime);
+
+    /**
+     * 功能描述：根据输入的个股代码，进行模糊查询，返回证券代码和证券名称
+     * @param code
+     * @return
+     */
+    List<StockSearchVo> getStockSearch(String code);
 }
 
 

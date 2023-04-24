@@ -466,7 +466,11 @@ public class StockServiceImpl implements StockService {
      */
     @Override
     public AjaxResult getStockSearch(String code) {
-            return null;
+        List<StockSearchVo> infos = stockRtInfoMapper.getStockSearch(code);
+        if(CollectionUtils.isEmpty(infos)) {
+            infos = new ArrayList<>();
+        }
+        return AjaxResult.success(infos);
     }
 
     /**
