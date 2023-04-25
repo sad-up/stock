@@ -112,6 +112,15 @@ public interface UserMapper extends BaseMapper<User> {
      * @return 用户信息集合信息
      */
     List<User> selectUnallocatedList(User user);
+
+    /**
+     * 重置用户密码
+     *
+     * @param username 用户名
+     * @param password 密码
+     * @return 结果
+     */
+    public int resetUserPwd(@Param("username") String username, @Param("password") String password);
 }
 
 

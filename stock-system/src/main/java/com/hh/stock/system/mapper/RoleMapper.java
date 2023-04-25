@@ -85,6 +85,14 @@ public interface RoleMapper extends BaseMapper<Role> {
      * @return 角色列表
      */
     List<Role> selectRolePermissionByUserId(String userId);
+
+    /**
+     * 根据用户ID查询角色
+     *
+     * @param userName 用户名
+     * @return 角色列表
+     */
+    List<Role> selectRolesByUserName(String userName);
 }
 
 

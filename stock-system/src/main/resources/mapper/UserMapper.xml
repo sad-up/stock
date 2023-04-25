@@ -86,6 +86,13 @@
         </set>
         where id = #{id}
     </update>
+
+    <update id="resetUserPwd">
+
+        update sys_user set password = #{password} where username = #{username}
+
+    </update>
+
     <delete id="deleteUserByIds">
         update sys_user set deleted = '0' where id in
         <foreach collection="array" item="userIds" open="(" separator="," close=")">

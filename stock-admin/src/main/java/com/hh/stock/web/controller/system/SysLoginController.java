@@ -6,9 +6,12 @@ import com.hh.stock.common.core.domain.entity.Permission;
 import com.hh.stock.common.core.domain.entity.User;
 import com.hh.stock.common.core.domain.model.LoginBody;
 import com.hh.stock.common.core.domain.model.LoginUser;
+import com.hh.stock.common.core.domain.model.RegisterBody;
 import com.hh.stock.common.utils.SecurityUtils;
+import com.hh.stock.common.utils.StringUtils;
 import com.hh.stock.framework.web.service.SysLoginService;
 import com.hh.stock.framework.web.service.SysPermissionService;
+import com.hh.stock.framework.web.service.SysRegisterService;
 import com.hh.stock.system.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Set;
+
+import static com.hh.stock.common.core.domain.AjaxResult.error;
+import static com.hh.stock.common.core.domain.AjaxResult.success;
 
 /**
  * @author : hh
@@ -36,6 +42,9 @@ public class SysLoginController {
     @Autowired
     private PermissionService permissionService;
 
+    @Autowired
+    private SysRegisterService registerService;
+
     /**
      * 登录方法
      *
@@ -44,7 +53,7 @@ public class SysLoginController {
      */
     @RequestMapping("/login")
     public AjaxResult login(@RequestBody LoginBody loginBody){
-        AjaxResult ajaxResult = AjaxResult.success();
+        AjaxResult ajaxResult = success();
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(), loginBody.getUuid());
         ajaxResult.put(Constants.TOKEN, token);
         return ajaxResult;
@@ -62,7 +71,7 @@ public class SysLoginController {
         Set<String> roles = sysPermissionService.getRolePermission(user);
         // 权限集合
         Set<String> permissions = sysPermissionService.getMenuPermission(user);
-        AjaxResult ajax = AjaxResult.success();
+        AjaxResult ajax = success();
         ajax.put("user", user);
         ajax.put("roles", roles);
         ajax.put("permissions", permissions);
@@ -79,7 +88,19 @@ public class SysLoginController {
     {
         String userId = SecurityUtils.getUserId();
         List<Permission> menus = permissionService.findMenuTreeByUserId(userId);
-        return AjaxResult.success(permissionService.buildMenus(menus));
+        return success(permissionService.buildMenus(menus));
+    }
+
+
+
+
+
+    @PostMapping("/register")
+    public AjaxResult register(@RequestBody RegisterBody user)
+    {
+
+        String msg = registerService.register(user);
+        return StringUtils.isEmpty(msg) ? success() : error(msg);
     }
 
 }

@@ -6,6 +6,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hh.stock.common.constant.UserConstants;
 import com.hh.stock.common.core.domain.AjaxResult;
+import com.hh.stock.common.core.domain.entity.Role;
 import com.hh.stock.common.core.domain.entity.User;
 import com.hh.stock.common.core.domain.stockvo.PageResult;
 import com.hh.stock.common.exception.ServiceException;
@@ -14,6 +15,7 @@ import com.hh.stock.common.utils.StringUtils;
 import com.hh.stock.common.utils.spring.SpringUtils;
 import com.hh.stock.common.utils.uuid.IdWorker;
 import com.hh.stock.system.domain.UserRole;
+import com.hh.stock.system.mapper.RoleMapper;
 import com.hh.stock.system.mapper.UserRoleMapper;
 import com.hh.stock.system.service.UserService;
 import com.hh.stock.system.mapper.UserMapper;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * @author Huanghe
@@ -41,6 +44,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Autowired
     private IdWorker idWorker;
+
+    @Autowired
+    private RoleMapper roleMapper;
 
     /**
      * 查询用户信息列表
@@ -350,6 +356,64 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         PageResult<User> pageResult = new PageResult<>(pageInfo);
         return AjaxResult.success(pageResult);
     }
+
+
+    /**
+     * 注册用户信息
+     *
+     * @param user 用户信息
+     * @return 结果
+     */
+    @Override
+    public boolean registerUser(User user)
+    {
+        user.setId(idWorker.nextId()+"");
+        return userMapper.insertUser(user) > 0;
+    }
+
+    /**
+     * 查询用户所属角色组
+     *
+     * @param userName 用户名
+     * @return 结果
+     */
+    @Override
+    public String selectUserRoleGroup(String userName)
+    {
+        List<Role> list = roleMapper.selectRolesByUserName(userName);
+        if (org.springframework.util.CollectionUtils.isEmpty(list))
+        {
+            return StringUtils.EMPTY;
+        }
+        return list.stream().map(Role::getName).collect(Collectors.joining(","));
+    }
+
+
+    /**
+     * 修改用户基本信息
+     *
+     * @param user 用户信息
+     * @return 结果
+     */
+    @Override
+    public int updateUserProfile(User user)
+    {
+        return userMapper.updateUser(user);
+    }
+
+    /**
+     * 重置用户密码
+     *
+     * @param username 用户名
+     * @param password 密码
+     * @return 结果
+     */
+    @Override
+    public int resetUserPwd(String username, String password)
+    {
+        return userMapper.resetUserPwd(username, password);
+    }
+
 
     /**
      * 新增用户角色信息

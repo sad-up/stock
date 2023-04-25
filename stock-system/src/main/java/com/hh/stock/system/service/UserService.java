@@ -164,4 +164,38 @@ public interface UserService extends IService<User> {
      */
 
     AjaxResult selectUnallocatedList(User user, Integer page, Integer pageSize);
+
+    /**
+     * 注册用户信息
+     *
+     * @param user 用户信息
+     * @return 结果
+     */
+    boolean registerUser(User user);
+
+    /**
+     * 根据用户ID查询用户所属角色组
+     *
+     * @param userName 用户名
+     * @return 结果
+     */
+    public String selectUserRoleGroup(String userName);
+
+    /**
+     * 修改用户基本信息
+     *
+     * @param user 用户信息
+     * @return 结果
+     */
+
+    int updateUserProfile(User user);
+
+    /**
+     * 重置用户密码
+     *
+     * @param username 用户名
+     * @param password 密码
+     * @return 结果
+     */
+    public int resetUserPwd(String username, String password);
 }
