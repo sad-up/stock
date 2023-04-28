@@ -1,6 +1,7 @@
 package com.hh.stock;
 
 
+import com.alipay.api.AlipayConfig;
 import com.hh.stock.common.config.vo.StockConfig;
 import com.hh.stock.common.config.vo.TaskThreadPoolInfo;
 import org.mybatis.spring.annotation.MapperScan;
@@ -9,11 +10,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
+@EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
 @ComponentScan(basePackages = {"com.hh.stock.web.**"})
 @ComponentScan("com.hh.**.service")
 @MapperScan("com.hh.**.mapper")

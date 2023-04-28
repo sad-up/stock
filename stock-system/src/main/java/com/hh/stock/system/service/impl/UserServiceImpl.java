@@ -6,6 +6,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hh.stock.common.constant.UserConstants;
 import com.hh.stock.common.core.domain.AjaxResult;
+import com.hh.stock.common.core.domain.entity.Asset;
 import com.hh.stock.common.core.domain.entity.Role;
 import com.hh.stock.common.core.domain.entity.User;
 import com.hh.stock.common.core.domain.stockvo.PageResult;
@@ -17,6 +18,7 @@ import com.hh.stock.common.utils.uuid.IdWorker;
 import com.hh.stock.system.domain.UserRole;
 import com.hh.stock.system.mapper.RoleMapper;
 import com.hh.stock.system.mapper.UserRoleMapper;
+import com.hh.stock.system.service.AssetService;
 import com.hh.stock.system.service.UserService;
 import com.hh.stock.system.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Autowired
     private RoleMapper roleMapper;
+
+    @Autowired
+    private AssetService assetService;
 
     /**
      * 查询用户信息列表
@@ -367,6 +372,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public boolean registerUser(User user)
     {
+        Asset Asset = new Asset();
+        Asset.setUsername(user.getUsername());
+        assetService.insertAccount(Asset);
         user.setId(idWorker.nextId()+"");
         return userMapper.insertUser(user) > 0;
     }

@@ -507,7 +507,6 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     public List<Permission> selectMenuList(Permission menu, String userId)
     {
         List<Permission> menuList = null;
-        System.out.println(userId);
         // 管理员显示所有菜单信息
         if (User.isAdmin(userId))
         {

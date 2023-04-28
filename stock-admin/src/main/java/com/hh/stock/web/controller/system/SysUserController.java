@@ -3,20 +3,21 @@ package com.hh.stock.web.controller.system;
 import com.hh.stock.common.constant.UserConstants;
 import com.hh.stock.common.core.controller.BaseController;
 import com.hh.stock.common.core.domain.AjaxResult;
+import com.hh.stock.common.core.domain.entity.Asset;
 import com.hh.stock.common.core.domain.entity.Role;
 import com.hh.stock.common.core.domain.entity.User;
 import com.hh.stock.common.utils.SecurityUtils;
 import com.hh.stock.common.utils.StringUtils;
+import com.hh.stock.system.service.AssetService;
 import com.hh.stock.system.service.RoleService;
 import com.hh.stock.system.service.UserService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.hh.stock.common.core.controller.BaseController;
-import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,9 @@ public class SysUserController extends BaseController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private AssetService assetService;
 
     /**
      * 获取用户列表
@@ -70,6 +74,10 @@ public class SysUserController extends BaseController {
         {
             return error("新增用户'" + user.getUsername() + "'失败，邮箱账号已存在");
         }
+        //新建账户
+        Asset asset = new Asset();
+        asset.setUsername(getUsername());
+        assetService.insertAccount(asset);
         user.setCreateBy(getUsername());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         return toAjax(userService.insertUser(user));

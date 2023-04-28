@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hh.stock.system.mapper.AssetMapper">
+
+    <resultMap id="BaseResultMap" type="com.hh.stock.common.core.domain.entity.Asset">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="buyId" column="buy_id" jdbcType="VARCHAR"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="total" column="total" jdbcType="INTEGER"/>
+            <result property="cash" column="cash" jdbcType="INTEGER"/>
+            <result property="stock" column="stock" jdbcType="INTEGER"/>
+            <result property="earn" column="earn" jdbcType="INTEGER"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,buy_id,username,total,
+        cash,stock,earn,
+        remark
+    </sql>
+
+    <insert id="insertUername">
+        insert into sys_asset(
+        <if test="id != null and id != 0">id,</if>
+        <if test="username != null and username != ''">username</if>
+        )values(
+        <if test="id != null and id != ''">#{id},</if>
+        <if test="username != null and username != ''">#{username}</if>
+        )
+    </insert>
+    <update id="updateTotal">
+        update  sys_asset
+        <set>
+            total= total + #{total}
+        </set>
+        where buy_id = #{buyerId}
+    </update>
+    <select id="getWalletUsername" resultType="com.hh.stock.common.core.domain.entity.Asset">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_asset
+        where username = #{username}
+    </select>
+    <select id="findBuyIdByUsername" resultType="java.lang.String">
+        select buy_id
+        from sys_asset
+        where username = #{username}
+    </select>
+
+
+</mapper>

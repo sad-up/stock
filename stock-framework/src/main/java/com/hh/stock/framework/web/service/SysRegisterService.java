@@ -3,6 +3,7 @@ package com.hh.stock.framework.web.service;
 import com.hh.stock.common.constant.CacheConstants;
 import com.hh.stock.common.constant.Constants;
 import com.hh.stock.common.constant.UserConstants;
+import com.hh.stock.common.core.domain.entity.Asset;
 import com.hh.stock.common.core.domain.entity.User;
 import com.hh.stock.common.core.domain.model.RegisterBody;
 import com.hh.stock.common.core.redis.RedisCache;
@@ -13,6 +14,7 @@ import com.hh.stock.common.utils.SecurityUtils;
 import com.hh.stock.common.utils.StringUtils;
 import com.hh.stock.framework.manager.AsyncManager;
 import com.hh.stock.framework.manager.factory.AsyncFactory;
+import com.hh.stock.system.service.AssetService;
 import com.hh.stock.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,6 +42,7 @@ public class SysRegisterService {
     {
         String msg = "", username = registerBody.getUsername(), password = registerBody.getPassword();
         User User = new User();
+
         User.setUsername(username);
 
         // 验证码开关
@@ -65,13 +68,13 @@ public class SysRegisterService {
         {
             msg = "密码长度必须在5到20个字符之间";
         }
-        else if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(User)))
+        else if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(User)) )
         {
             msg = "保存用户'" + username + "'失败，注册账号已存在";
         }
         else
         {
-            User.setNickName(username);
+            User.setUsername(username);
             User.setPassword(SecurityUtils.encryptPassword(password));
             boolean regFlag = userService.registerUser(User);
             if (!regFlag)

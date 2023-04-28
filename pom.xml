@@ -11,7 +11,7 @@
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
   <modules>
-    <module>stock-backend</module>
+<!--    <module>stock-backend</module>-->
     <module>stock-common</module>
     <module>stock-admin</module>
     <module>stock-framework</module>
@@ -33,7 +33,7 @@
     <mybatis-spring-boot-starter.version>2.1.4</mybatis-spring-boot-starter.version>
     <pagehelper-spring-boot-starter.version>1.2.12</pagehelper-spring-boot-starter.version>
     <mysql-driver.version>5.1.49</mysql-driver.version>
-    <fastjson.version>1.2.71</fastjson.version>
+<!--    <fastjson.version>1.2.71</fastjson.version>-->
     <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
     <druid-spring-boot-starter.version>1.1.22</druid-spring-boot-starter.version>
     <druid-core-version>1.2.8</druid-core-version>
@@ -48,6 +48,8 @@
     <kaptcha.version>2.3.3</kaptcha.version>
     <poi.version>4.1.2</poi.version>
     <fastjson.version>1.2.80</fastjson.version>
+    <fastjson2.version>2.0.26</fastjson2.version>
+    <alipay.version>4.34.0.ALL</alipay.version>
     <hutool.version>5.3.3</hutool.version>
     <bitwalker.version>1.21</bitwalker.version>
     <gson.version>2.8.9</gson.version>
@@ -240,6 +242,23 @@
         <artifactId>UserAgentUtils</artifactId>
         <version>${bitwalker.version}</version>
       </dependency>
+
+
+      <dependency>
+        <groupId>com.alibaba.fastjson2</groupId>
+        <artifactId>fastjson2</artifactId>
+        <version>${fastjson2.version}</version>
+      </dependency>
+
+      <!--沙箱支付-->
+
+      <dependency>
+        <groupId>com.alipay.sdk</groupId>
+        <artifactId>alipay-sdk-java</artifactId>
+        <version>${alipay.version}</version>
+      </dependency>
+
+
 
       <!-- 引入xxljob核心-->
       <dependency>
