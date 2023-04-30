@@ -1,19 +1,14 @@
 package com.hh.stock.web.controller.stock;
 
 import com.hh.stock.common.core.domain.AjaxResult;
-import com.hh.stock.common.core.domain.stockvo.PageResult;
-import com.hh.stock.common.core.domain.stockvo.StockUpdownDomain;
 import com.hh.stock.system.domain.StockBusiness;
+import com.hh.stock.common.core.domain.entity.StockOrders;
 import com.hh.stock.system.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.print.PrinterGraphics;
 import java.io.IOException;
 import java.util.List;
 
@@ -213,5 +208,21 @@ public class StockController {
         return stockService.getStockWeekKline(code);
     }
 
+    /**
+     * 获取个股股票信息
+     * @return
+     */
+    @GetMapping("/stock/info")
+    public AjaxResult getStockInfo(@RequestParam(required = false, value = "code") String code){
+        return stockService.getStockInfo(code);
+    }
+
+    /**
+     * 购买股票
+     */
+    @PostMapping("/stock/buy")
+    public AjaxResult stockBuy(@Validated StockOrders stockOrders){
+        return stockService.stockBuy(stockOrders);
+    }
 
 }

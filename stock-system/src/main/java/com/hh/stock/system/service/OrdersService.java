@@ -1,7 +1,7 @@
 package com.hh.stock.system.service;
 
 import com.hh.stock.common.core.domain.AjaxResult;
-import com.hh.stock.system.domain.Orders;
+import com.hh.stock.common.core.domain.entity.Orders;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletRequest;

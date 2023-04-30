@@ -1,11 +1,11 @@
 package com.hh.stock.system.service;
 
 import com.hh.stock.common.core.domain.AjaxResult;
+import com.hh.stock.common.core.domain.entity.StockOrders;
 import com.hh.stock.system.domain.StockBusiness;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -148,4 +148,15 @@ public interface StockService {
      * @return
      */
     AjaxResult getStockWeekKline(String code);
+
+    /**
+     * 获取个股股票信息
+     * @return
+     */
+    AjaxResult getStockInfo(String code);
+
+    /**
+     * 购买股票
+     */
+    AjaxResult stockBuy(StockOrders stockOrders);
 }

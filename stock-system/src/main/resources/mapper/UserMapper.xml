@@ -197,4 +197,22 @@
         </if>
     </select>
 
+    <select id="selectUserByIds" resultType="java.lang.String">
+        select u.username
+        from sys_user u
+        where 1
+        <foreach collection="userIds" item="userId"  separator=",">
+            id = #{userId}
+        </foreach>
+    </select>
+
+    <select id="findIdByUsername" resultType="java.lang.String">
+        select
+            id
+        from
+        sys_user
+        where username = #{username}
+    </select>
+
+
 </mapper>

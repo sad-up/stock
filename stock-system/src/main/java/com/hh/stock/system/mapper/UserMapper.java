@@ -89,6 +89,14 @@ public interface UserMapper extends BaseMapper<User> {
     User selectUserById(String userId);
 
     /**
+     * 通过用户ID批量查询用户
+     *
+     * @param userIds 用户ID
+     * @return 用户对象信息
+     */
+    List<String> selectUserByIds(@Param("userIds") String[] userIds);
+
+    /**
      * 修改用户信息
      *
      * @param user 用户信息
@@ -121,6 +129,12 @@ public interface UserMapper extends BaseMapper<User> {
      * @return 结果
      */
     public int resetUserPwd(@Param("username") String username, @Param("password") String password);
+
+    /**
+     * 根据用户名查找userId
+     * @param username
+     */
+    String findIdByUsername(String username);
 }
 
 

@@ -104,6 +104,12 @@ public interface StockRtInfoMapper extends BaseMapper<StockRtInfo> {
      * @return
      */
     List<StockSearchVo> getStockSearch(String code);
+
+    /**
+     * 获取个股股票信息
+     * @return
+     */
+    List<StockInfoVo> getStockInfo(String code);
 }
 
 

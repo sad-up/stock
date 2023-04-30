@@ -1,4 +1,4 @@
-package com.hh.stock.system.domain;
+package com.hh.stock.common.core.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -12,7 +12,7 @@ import lombok.Data;
  * 
  * @TableName orders
  */
-@TableName(value ="orders")
+@TableName(value ="sys_orders")
 @Data
 public class Orders implements Serializable {
     /**
@@ -54,9 +54,9 @@ public class Orders implements Serializable {
     private String buyId;
 
     /**
-     * 总价格
+     * 金额
      */
-    private BigDecimal total;
+    private BigDecimal cash;
 
     /**
      * 用户名
@@ -68,6 +68,10 @@ public class Orders implements Serializable {
      */
     private String tradeNo;
 
+    /**
+     * 是否删除 0 删除 1未删除
+     */
+    private String deleted;
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
@@ -92,7 +96,8 @@ public class Orders implements Serializable {
             && (this.getPayTime() == null ? other.getPayTime() == null : this.getPayTime().equals(other.getPayTime()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
             && (this.getBuyId() == null ? other.getBuyId() == null : this.getBuyId().equals(other.getBuyId()))
-            && (this.getTotal() == null ? other.getTotal() == null : this.getTotal().equals(other.getTotal()));
+            && (this.getDeleted() == null ? other.getDeleted() == null : this.getDeleted().equals(other.getDeleted()))
+            && (this.getCash() == null ? other.getCash() == null : this.getCash().equals(other.getCash()));
     }
 
     @Override
@@ -108,7 +113,8 @@ public class Orders implements Serializable {
         result = prime * result + ((getPayTime() == null) ? 0 : getPayTime().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getBuyId() == null) ? 0 : getBuyId().hashCode());
-        result = prime * result + ((getTotal() == null) ? 0 : getTotal().hashCode());
+        result = prime * result + ((getDeleted() == null) ? 0 : getDeleted().hashCode());
+        result = prime * result + ((getCash() == null) ? 0 : getCash().hashCode());
         return result;
     }
 
@@ -127,7 +133,8 @@ public class Orders implements Serializable {
         sb.append(", payTime=").append(payTime);
         sb.append(", status=").append(status);
         sb.append(", buyId=").append(buyId);
-        sb.append(", total=").append(total);
+        sb.append(", cash=").append(cash);
+        sb.append(", deleted=").append(deleted);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

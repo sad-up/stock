@@ -211,4 +211,15 @@
         FROM stock_rt_info
         where stock_code like concat('%',#{code},'%')
     </select>
+
+    <select id="getStockInfo" resultType="com.hh.stock.common.core.domain.stockvo.StockInfoVo">
+        select
+            stock_code as code,
+            stock_name as name,
+            cur_time as date,
+            cur_price as tradePrice
+        from stock_rt_info
+        where stock_code = #{code}
+        order by date desc limit 1
+    </select>
 </mapper>

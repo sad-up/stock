@@ -29,15 +29,43 @@ public interface AssetMapper extends BaseMapper<Asset> {
 
     /**
      * 更新金额
-     * @param total
+     * @param cash
      */
-    void updateTotal(@Param("buyerId")String buyerId,@Param("total") BigDecimal total);
+    void updateCash(@Param("buyerId") String buyerId,@Param("cash") BigDecimal cash);
+
+
 
     /**
      * 通过用户名查出buy_id
      * @param username
      */
     String findBuyIdByUsername(String username);
+
+    /**
+     * 通过用户名批量删除用户
+     * @param username
+     */
+    void deleteAccount(@Param("usernames") List username);
+
+    /**
+     * 更新股票
+     * @param asset
+     */
+    void updateStock(@Param("asset") Asset asset,@Param("buy") String buy);
+
+    /**
+     * 通过用户名查找账户金额
+     * @param username
+     * @return
+     */
+    BigDecimal findCashByUsername(String username);
+
+    /**
+     * 通过用户名查找股票
+     * @param username
+     * @return
+     */
+    BigDecimal findStockByUsername(String username);
 }
 
 

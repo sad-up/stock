@@ -190,6 +190,16 @@ public class AjaxResult extends HashMap<String, Object> {
         DATA_ERROR(0,"参数异常"),
         NO_LOGIN(600,"匿名用户无权限访问"),
         NO_AUTH(700,"无权限 访问,请联系管理员！"),
+
+        ORDER_IN_ERROR(800,"资金不足"),
+        ORDER_OUT_ERROR(801,"股票不足"),
+
+        DATE_WEEKEND_ERROR(802,"周末未开市，暂停交易"),
+
+        DATE_BEFORE_ERROR(803,"暂未开市，请稍等"),
+
+        DATE_AFTER_ERROR(803,"交易时间已结束哦"),
+
         NO_RESPONSE_DATA(0,"无响应数据"),
         SYSTEM_VERIFY_CODE_NOT_EMPTY(0,"验证码不能为空"),
         SYSTEM_VERIFY_CODE_ERROR(0,"验证码错误"),

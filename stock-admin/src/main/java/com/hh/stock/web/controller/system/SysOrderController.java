@@ -3,6 +3,7 @@ package com.hh.stock.web.controller.system;
 import com.hh.stock.common.core.domain.AjaxResult;
 import com.hh.stock.system.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,5 +36,7 @@ public class SysOrderController {
     public AjaxResult add(HttpServletRequest request){
         return ordersService.add(request);
     }
+
+
 
 }

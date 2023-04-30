@@ -48,6 +48,15 @@ public class AssetServiceImpl extends ServiceImpl<AssetMapper, Asset>
         List<Asset>  infos = assetMapper.getWalletUsername(username);
         return AjaxResult.success(infos);
     }
+
+    /**
+     * 通过用户名批量删除用户
+     * @param username
+     */
+    @Override
+    public void deleteAccount(List username) {
+        assetMapper.deleteAccount(username);
+    }
 }
 
 

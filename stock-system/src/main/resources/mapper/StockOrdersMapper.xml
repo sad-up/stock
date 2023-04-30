@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hh.stock.system.mapper.StockOrdersMapper">
+
+    <resultMap id="BaseResultMap" type="com.hh.stock.common.core.domain.entity.StockOrders">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="name" column="stock_name" jdbcType="VARCHAR"/>
+            <result property="code" column="stock_code" jdbcType="VARCHAR"/>
+            <result property="tradePrice" column="trade_price" jdbcType="VARCHAR"/>
+            <result property="num" column="num" jdbcType="INTEGER"/>
+            <result property="stockTotal" column="stock_total" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
+            <result property="uid" column="uid" jdbcType="VARCHAR"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="VARCHAR"/>
+            <result property="buy" column="buy" jdbcType="VARCHAR"/>
+            <result property="deleted" column="deleted" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,code,
+        trade_price,num,stock_total,
+        create_time,pay_time,uid,
+        username,status,buy,deleted
+    </sql>
+
+    <insert id="insertInfo">
+        insert into stock_orders(
+        <if test="id != null and id != ''">id,</if>
+        <if test="name != null and name != ''">name,</if>
+        <if test="code != null and code != ''">code,</if>
+        <if test="tradePrice != null and tradePrice != 0">trade_price,</if>
+        <if test="num != null and num != 0">num,</if>
+        <if test="stockTotal != null and stockTotal != 0">stock_total,</if>
+        <if test="uid != null and uid != ''">uid,</if>
+        <if test="username != null and username != ''">username,</if>
+        <if test="status != null and status != ''">status,</if>
+        <if test="buy != null and buy != ''">buy,</if>
+        <if test="deleted != null and deleted != ''">deleted,</if>
+        create_time
+        )
+        values(
+        <if test="id != null and id != ''">#{id},</if>
+        <if test="name != null and name != ''">#{name},</if>
+        <if test="code != null and code != ''">#{code},</if>
+        <if test="tradePrice != null and tradePrice != 0">#{tradePrice},</if>
+        <if test="num != null and num != 0">#{num},</if>
+        <if test="stockTotal != null and stockTotal != 0">#{stockTotal},</if>
+        <if test="uid != null and uid != ''">#{uid},</if>
+        <if test="username != null and username != ''">#{username},</if>
+        <if test="status != null and status != ''">#{status},</if>
+        <if test="buy != null and buy != ''">#{buy},</if>
+        <if test="deleted != null and deleted != ''">#{deleted},</if>
+        sysdate()
+        )
+
+    </insert>
+    <update id="updateStatus">
+        update stock_orders
+        <set>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="code != null and code != ''">code = #{code},</if>
+            <if test="tradePrice != null and tradePrice != 0">trade_price = #{tradePrice},</if>
+            <if test="num != null and num != 0">num = #{num},</if>
+            <if test="stockTotal != null and stockTotal != 0">stock_total = #{stockTotal},</if>
+            <if test="uid != null and uid != ''">uid = #{uid},</if>
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="buy != null and buy != ''">buy = #{buy},</if>
+            <if test="deleted != null and deleted != ''">deleted = #{deleted},</if>
+            pay_time = sysdate()
+        </set>
+        where username = #{username}
+    </update>
+</mapper>

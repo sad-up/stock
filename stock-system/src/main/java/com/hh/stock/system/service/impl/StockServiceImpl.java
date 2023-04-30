@@ -7,9 +7,12 @@ import com.github.pagehelper.PageInfo;
 import com.google.gson.Gson;
 import com.hh.stock.common.config.vo.StockConfig;
 import com.hh.stock.common.core.domain.AjaxResult;
+import com.hh.stock.common.core.domain.entity.Asset;
 import com.hh.stock.common.core.domain.stockvo.*;
 import com.hh.stock.common.utils.DateTimeUtil;
+import com.hh.stock.common.utils.uuid.IdWorker;
 import com.hh.stock.system.domain.StockBusiness;
+import com.hh.stock.common.core.domain.entity.StockOrders;
 import com.hh.stock.system.mapper.*;
 import com.hh.stock.system.service.StockService;
 import org.joda.time.DateTime;
@@ -20,9 +23,13 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.hh.stock.common.utils.DateTimeUtil.isWorkDay;
+import static java.time.LocalTime.now;
 
 
 /**
@@ -51,6 +58,18 @@ public class StockServiceImpl implements StockService {
 
     @Autowired
     private StockConfig stockConfig;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private StockOrdersMapper stockOrdersMapper;
+
+    @Autowired
+    private IdWorker idWorker;
+
+    @Autowired
+    private AssetMapper assetMapper;
 
 
 
@@ -526,6 +545,88 @@ public class StockServiceImpl implements StockService {
         // 3.组装数据
         return AjaxResult.success(infos);
     }
+
+    /**
+     * 获取个股股票信息
+     * @return
+     */
+    @Override
+    public AjaxResult getStockInfo(String code) {
+        List<StockInfoVo> infos = stockRtInfoMapper.getStockInfo(code);
+        return AjaxResult.success(infos);
+    }
+
+
+
+    /**
+     * 购买股票
+     */
+    @Override
+    public AjaxResult stockBuy(StockOrders stockOrders) {
+        System.out.println(stockOrders);
+        // 判断是否在交易日
+        DateTime now = new DateTime().minusMinutes(+1);
+        DateTime lastDateStock = DateTimeUtil.getLastDate4Stock(new DateTime().minusMinutes(+1));
+        if(!isWorkDay(now)){
+            return AjaxResult.error(AjaxResult.ResponseCode.DATE_WEEKEND_ERROR.getMessage());
+        }
+        else{
+            if(now.isBefore(lastDateStock)){
+                return AjaxResult.error(AjaxResult.ResponseCode.DATE_BEFORE_ERROR.getMessage());
+            }
+            else if(now.isAfter(lastDateStock)) {
+                return AjaxResult.error(AjaxResult.ResponseCode.DATE_AFTER_ERROR.getMessage());
+            }
+        }
+        // 判断 0 买入 1 卖出
+        if("0".equals(stockOrders.getBuy())){
+            BigDecimal cash = assetMapper.findCashByUsername(stockOrders.getUsername());
+            /*
+            int a = bigdemical.compareTo(bigdemical2)
+            a = -1,表示bigdemical小于bigdemical2；
+            a = 0,表示bigdemical等于bigdemical2；
+            a = 1,表示bigdemical大于bigdemical2；
+             */
+            // 判断账户金额是否比买入的金额大
+            if(cash.compareTo(stockOrders.getStockTotal()) == 1 || cash.compareTo(stockOrders.getStockTotal()) == 0){
+                String user_id = userMapper.findIdByUsername(stockOrders.getUsername());
+                stockOrders.setId(idWorker.nextId()+"");
+                stockOrders.setUid(user_id);
+                stockOrdersMapper.insertInfo(stockOrders);
+                Asset asset = new Asset();
+                asset.setUsername(stockOrders.getUsername());
+                asset.setStock(stockOrders.getStockTotal());
+                assetMapper.updateStock(asset,stockOrders.getBuy());
+                // 更新订单
+                stockOrders.setStatus("1");
+                stockOrdersMapper.updateStatus(stockOrders);
+            }
+            else{
+                return AjaxResult.error(AjaxResult.ResponseCode.ORDER_IN_ERROR.getMessage());
+            }
+        }else if("1".equals(stockOrders.getBuy())){
+            BigDecimal stock = assetMapper.findStockByUsername(stockOrders.getUsername());
+            if(stock.compareTo(stockOrders.getStockTotal()) == 1 || stock.compareTo(stockOrders.getStockTotal()) == 0){
+                String user_id = userMapper.findIdByUsername(stockOrders.getUsername());
+                stockOrders.setId(idWorker.nextId()+"");
+                stockOrders.setUid(user_id);
+                stockOrdersMapper.insertInfo(stockOrders);
+                Asset asset = new Asset();
+                asset.setUsername(stockOrders.getUsername());
+                asset.setCash(stockOrders.getStockTotal());
+                assetMapper.updateStock(asset,stockOrders.getBuy());
+                // 更新订单
+                stockOrders.setStatus("1");
+                stockOrdersMapper.updateStatus(stockOrders);
+            }
+            else{
+                return AjaxResult.error(AjaxResult.ResponseCode.ORDER_OUT_ERROR.getMessage());
+            }
+        }
+
+        return AjaxResult.success("交易成功");
+    }
+
 
 }
 

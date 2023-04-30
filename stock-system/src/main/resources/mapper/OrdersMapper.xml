@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hh.stock.system.mapper.OrdersMapper">
 
-    <resultMap id="BaseResultMap" type="com.hh.stock.system.domain.Orders">
+    <resultMap id="BaseResultMap" type="com.hh.stock.common.core.domain.entity.Orders">
             <id property="id" column="id" jdbcType="VARCHAR"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="username" column="username" jdbcType="VARCHAR"/>
@@ -14,13 +14,14 @@
             <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
             <result property="status" column="states" jdbcType="VARCHAR"/>
             <result property="buyId" column="buy_id" jdbcType="INTEGER"/>
-            <result property="total" column="total" jdbcType="DECIMAL"/>
+            <result property="cash" column="cash" jdbcType="DECIMAL"/>
+            <result property="deleted" column="deleted" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,name,username,trade_no,
         alipay_no,create_time,pay_time,
-        status,buy_id,total
+        status,buy_id,cash,deleted
     </sql>
 
     <insert id="insertOders" >
@@ -31,7 +32,7 @@
         <if test="tradeNo != null and tradeNo != ''">trade_no,</if>
         <if test="alipayNo != null and alipayNo != ''">alipay_no,</if>
         <if test="status != null and status != ''">status,</if>
-        <if test="total != null and total != ''">total,</if>
+        <if test="cash != null and cash != ''">cash,</if>
         <if test="buyId != null and buyId != ''">buy_id,</if>
         <if test="payTime != null and payTime != ''">pay_time,</if>
         create_time
@@ -42,7 +43,7 @@
         <if test="tradeNo != null and tradeNo != ''">#{tradeNo},</if>
         <if test="alipayNo != null and alipayNo != ''">#{alipayNo},</if>
         <if test="status != null and status != ''">#{status},</if>
-        <if test="total != null and total != ''">#{total},</if>
+        <if test="cash != null and cash != ''">#{cash},</if>
         <if test="buyId != null and buyId != ''">#{buyId},</if>
         <if test="payTime != null and payTime != ''">#{payTime},</if>
         sysdate()
@@ -56,17 +57,29 @@
             <if test="tradeNo != null and tradeNo != ''">trade_no = #{tradeNo},</if>
             <if test="alipayNo != null and alipayNo != ''">alipay_no = #{alipayNo},</if>
             <if test="status != null and status != ''">status = #{status},</if>
-            <if test="total != null and total != ''"> total = #{total},</if>
+            <if test="cash != null and cash != ''"> total = #{cash},</if>
             pay_time = sysdate()
         </set>
         where id = #{id}
     </update>
 
-        <select id="selectOrderbuyId" resultType="java.lang.String">
+    <update id="updateByOrdersId">
+
+    </update>
+
+    <select id="selectOrderbuyId" resultType="java.lang.String">
         select
            id
         from orders
         where buy_id = #{buyId}
         AND create_time >= DATE_SUB(NOW(), INTERVAL 3 MINUTE)
     </select>
+    <select id="selectOrderUsername" resultType="java.lang.String">
+        select
+            id
+        from orders
+        where username = #{username}
+          AND create_time >= DATE_SUB(NOW(), INTERVAL 3 MINUTE)
+    </select>
+
 </mapper>

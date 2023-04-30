@@ -6,37 +6,63 @@
 
     <resultMap id="BaseResultMap" type="com.hh.stock.common.core.domain.entity.Asset">
             <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="uId" column="uid" jdbcType="VARCHAR"/>
             <result property="buyId" column="buy_id" jdbcType="VARCHAR"/>
             <result property="username" column="username" jdbcType="VARCHAR"/>
             <result property="total" column="total" jdbcType="INTEGER"/>
             <result property="cash" column="cash" jdbcType="INTEGER"/>
             <result property="stock" column="stock" jdbcType="INTEGER"/>
+            <result property="status" column="states" jdbcType="VARCHAR"/>
             <result property="earn" column="earn" jdbcType="INTEGER"/>
             <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="deleted" column="deleted" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,buy_id,username,total,
-        cash,stock,earn,
-        remark
+        id,uid,buy_id,username,total,
+        cash,stock,earn,status,
+        remark,deleted
     </sql>
 
     <insert id="insertUername">
         insert into sys_asset(
-        <if test="id != null and id != 0">id,</if>
+        <if test="id != null and id != ''">id,</if>
         <if test="username != null and username != ''">username</if>
         )values(
         <if test="id != null and id != ''">#{id},</if>
         <if test="username != null and username != ''">#{username}</if>
         )
     </insert>
-    <update id="updateTotal">
+    <update id="updateCash">
         update  sys_asset
         <set>
-            total= total + #{total}
+            cash= cash + #{cash}
         </set>
         where buy_id = #{buyerId}
     </update>
+    <update id="updateStock">
+        update  sys_asset
+        <set>
+            <if test="buy == 0">
+                <if test="asset.stock != null and asset.stock != 0">stock = stock + #{asset.stock},</if>
+                <if test="asset.stock != null and asset.stock != 0">cash = cash - #{asset.stock}</if>
+            </if>
+            <if test="buy == 1">
+                <if test="asset.cash != null and asset.cash != 0">cash = cash + #{asset.cash},</if>
+                <if test="asset.cash != null and asset.cash != 0">stock = stock - #{asset.cash}</if>
+            </if>
+        </set>
+        where username = #{asset.username}
+    </update>
+
+
+    <delete id="deleteAccount">
+        update sys_asset set deleted = '0' where username in
+        <foreach collection="usernames" item="username" separator="," >
+            #{username}
+        </foreach>
+    </delete>
+
     <select id="getWalletUsername" resultType="com.hh.stock.common.core.domain.entity.Asset">
         select
         <include refid="Base_Column_List"/>
@@ -45,6 +71,18 @@
     </select>
     <select id="findBuyIdByUsername" resultType="java.lang.String">
         select buy_id
+        from sys_asset
+        where username = #{username}
+    </select>
+    <select id="findCashByUsername" resultType="java.math.BigDecimal">
+        select
+            cash
+        from sys_asset
+        where username = #{username}
+    </select>
+    <select id="findStockByUsername" resultType="java.math.BigDecimal">
+        select
+            stock
         from sys_asset
         where username = #{username}
     </select>

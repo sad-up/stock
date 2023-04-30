@@ -3,7 +3,7 @@ package com.hh.stock.system.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hh.stock.common.core.domain.AjaxResult;
 import com.hh.stock.common.utils.uuid.IdWorker;
-import com.hh.stock.system.domain.Orders;
+import com.hh.stock.common.core.domain.entity.Orders;
 import com.hh.stock.system.mapper.AssetMapper;
 import com.hh.stock.system.service.OrdersService;
 import com.hh.stock.system.mapper.OrdersMapper;
@@ -44,7 +44,9 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders>
         //通过用户名查出buy_id
         orders.setBuyId(assetMapper.findBuyIdByUsername(request.getParameter("username")));
         ordersMapper.insertOders(orders);
-        return AjaxResult.success("成功");
+        // 查找用户购买对应的id
+        String id = ordersMapper.selectOrderUsername(request.getParameter("username"));
+        return AjaxResult.success("订单生成",id);
 
     }
 }

@@ -15,5 +15,7 @@ public class AliPay {
     private String subject;
     private String alipayTraceNo;
 
+    private String id;
+
 
 }

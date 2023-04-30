@@ -53,6 +53,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Autowired
     private AssetService assetService;
 
+
+
     /**
      * 查询用户信息列表
      */
@@ -232,6 +234,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     /**
+     * 通过用户ID批量查询用户
+     *
+     * @param userIds 用户ID
+     * @return 用户对象信息
+     */
+    @Override
+    public List selectUserByIds(String[] userIds)
+    {
+        return userMapper.selectUserByIds(userIds);
+    }
+
+    /**
      * 根据条件分页查询用户列表
      *
      * @param user 用户信息
@@ -286,14 +300,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Transactional
     public int deleteUserByIds(String[] userIds)
     {
-        System.out.println(userIds);
+
         for (String userId : userIds)
         {
             checkUserAllowed(new User(userId));
             checkUserDataScope(userId);
+
+
         }
         // 删除用户与角色关联
         userRoleMapper.deleteUserRole(userIds);
+        // 查出该id下的用户名称
+        List username = userMapper.selectUserByIds(userIds);
+        // 批量删除用户名
+        assetService.deleteAccount(username);
         return userMapper.deleteUserByIds(userIds);
     }
 

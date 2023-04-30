@@ -9,8 +9,7 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.hh.stock.common.config.AliPayConfig;
-import com.hh.stock.common.utils.uuid.IdWorker;
-import com.hh.stock.system.domain.Orders;
+import com.hh.stock.common.core.domain.entity.Orders;
 import com.hh.stock.system.mapper.AssetMapper;
 import com.hh.stock.system.mapper.OrdersMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +20,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,7 +48,6 @@ public class AliPayController {
     private OrdersMapper ordersMapper;
 
 
-
     @Autowired
     private AssetMapper assetMapper;
 
@@ -64,27 +59,40 @@ public class AliPayController {
 
 
         // 2. 创建 Request并设置Request参数
-        AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();  // 发送请求的 Request类
+        // 发送请求的 Request类
+        AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
         request.setNotifyUrl(aliPayConfig.getNotifyUrl());
         request.setReturnUrl(aliPayConfig.getReturnUrl());
         JSONObject bizContent = new JSONObject();
-        bizContent.set("out_trade_no", aliPay.getTraceNo());  // 我们自己生成的订单编号
-        bizContent.set("total_amount", aliPay.getTotalAmount()); // 订单的总金额
-        bizContent.set("subject", aliPay.getSubject());   // 支付的名称
-        bizContent.set("product_code", "FAST_INSTANT_TRADE_PAY");  // 固定配置
+        // 我们自己生成的订单编号
+        bizContent.set("out_trade_no", aliPay.getTraceNo());
+        // 订单的总金额
+        bizContent.set("total_amount", aliPay.getTotalAmount());
+        // 支付的名称
+        bizContent.set("subject", aliPay.getSubject());
+        // 固定配置
+        bizContent.set("product_code", "FAST_INSTANT_TRADE_PAY");
+        bizContent.set("id", aliPay.getId());
         request.setBizContent(bizContent.toString());
 
-
+        // 通过id修改订单状态
+        Orders orders = new Orders();
+        orders.setId(aliPay.getId());
+        // 更新订单未支付
+        orders.setStatus("2");
+        ordersMapper.updateById(orders);
 
         // 执行请求，拿到响应的结果，返回给浏览器
         String form = "";
         try {
-            form = alipayClient.pageExecute(request).getBody(); // 调用SDK生成表单
+            // 调用SDK生成表单
+            form = alipayClient.pageExecute(request).getBody();
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
         httpResponse.setContentType("text/html;charset=" + CHARSET);
-        httpResponse.getWriter().write(form);// 直接将完整的表单html输出到页面
+        // 直接将完整的表单html输出到页面
+        httpResponse.getWriter().write(form);
         httpResponse.getWriter().flush();
         httpResponse.getWriter().close();
 
@@ -136,11 +144,12 @@ public class AliPayController {
                     orders.setName(subject);
                     orders.setAlipayNo(alipayTradeNo);
                     orders.setTradeNo(outTradeNo);
-                    orders.setTotal(buyerPayAmount);
+                    orders.setCash(buyerPayAmount);
+                    // 更新订单支付完成
                     orders.setStatus("1");
                     // 更新订单
                     ordersMapper.updateByOrders(orders);
-                    assetMapper.updateTotal(buyerId, buyerPayAmount);
+                    assetMapper.updateCash(buyerId, buyerPayAmount);
                 }
             }
         }

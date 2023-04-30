@@ -4,7 +4,6 @@ import com.hh.stock.common.core.domain.AjaxResult;
 import com.hh.stock.common.core.domain.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -105,6 +104,14 @@ public interface UserService extends IService<User> {
      * @return 用户对象信息
      */
     User selectUserById(String userId);
+
+    /**
+     * 通过用户ID批量查询用户
+     *
+     * @param userIds 用户ID
+     * @return 用户对象信息
+     */
+    List selectUserByIds(String[] userIds);
 
 
     List<User> selectUserList(User user);

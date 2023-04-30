@@ -5,6 +5,7 @@ import com.hh.stock.common.core.domain.entity.Asset;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
 * @author Huanghe
@@ -24,4 +25,10 @@ public interface AssetService extends IService<Asset> {
      * @return
      */
     AjaxResult getWallet(HttpServletRequest request);
+
+    /**
+     * 通过用户名删除用户
+     * @param username
+     */
+    void deleteAccount(List username);
 }
